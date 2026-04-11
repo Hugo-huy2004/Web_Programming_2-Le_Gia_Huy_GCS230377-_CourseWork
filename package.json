@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@mui/x-data-grid": "^8.27.5",
-    "nodemailer": "^8.0.4"
-  }
-}
