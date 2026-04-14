@@ -61,7 +61,7 @@ const Collections = () => {
     const img = e.currentTarget.closest("article")?.querySelector("img")
     if (img) {
       const rect = img.getBoundingClientRect()
-      const flySize = Math.min(88, Math.max(56, rect.width * 0.34))
+      const flySize = Math.min(64, Math.max(36, rect.width * 0.2))
       triggerAnimation(input.imageUrl, rect.left + rect.width / 2, rect.top + rect.height / 2, flySize)
     }
     addToCart(input.id, input.stock)

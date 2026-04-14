@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useAppointmentStore } from "@/stores/useAppointmentStore"
 import { APPOINTMENT_SERVICE_OPTIONS, APPOINTMENT_TIME_SLOTS } from "@/constants/appointmentOptions"
+import { toast } from "sonner"
 
 const AppointmentPage = () => {
   const { addAppointment } = useAppointmentStore()
@@ -12,7 +13,6 @@ const AppointmentPage = () => {
   const [service, setService] = useState<string>(APPOINTMENT_SERVICE_OPTIONS[0])
   const [message, setMessage] = useState("")
   const [submitted, setSubmitted] = useState(false)
-  const [statusMessage, setStatusMessage] = useState("")
 
   const resetForm = () => {
     setFullName("")
@@ -40,11 +40,11 @@ const AppointmentPage = () => {
     })
 
     if (!result.ok) {
-      setStatusMessage(result.message)
+      toast.error(result.message || "Could not submit appointment request.")
       return
     }
 
-    setStatusMessage("")
+    toast.success("Appointment request submitted successfully.")
     setSubmitted(true)
   }
  
@@ -238,9 +238,6 @@ const AppointmentPage = () => {
               >
                 Finalize Registry Request
               </button>
-              {statusMessage && (
-                <p className="text-[10px] text-destructive italic font-serif mt-6 text-center">{statusMessage}</p>
-              )}
             </div>
           </form>
         </main>

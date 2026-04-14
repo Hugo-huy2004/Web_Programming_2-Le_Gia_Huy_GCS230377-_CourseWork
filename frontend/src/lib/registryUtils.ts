@@ -3,14 +3,14 @@ import { includesKeyword, matchesStatusFilter, normalizeKeyword } from "@/lib/fi
 import type { Product } from "@/types/product"
 import type { CustomerAccount, Order, SupportStatus, SupportTicket } from "@/types/store"
 
-export type CustomerRegistryStats = {
+export type CustomerListStats = {
   totalPortfolioValue: number
   diamondCount: number
   goldCount: number
   visibleCount: number
 }
 
-export type OrderRegistryStats = {
+export type OrderListStats = {
   totalRevenue: number
   pendingCount: number
   totalOrders: number
@@ -57,10 +57,10 @@ export function filterAndSortCustomers(
   return filtered.sort((a, b) => b.totalSpent - a.totalSpent)
 }
 
-export function calculateCustomerRegistryStats(
+export function calculateCustomerListStats(
   customers: CustomerAccount[],
   visibleCustomers: CustomerAccount[]
-): CustomerRegistryStats {
+): CustomerListStats {
   const totalPortfolioValue = customers.reduce((sum, customer) => sum + customer.totalSpent, 0)
   const diamondCount = customers.filter((customer) => customer.totalSpent >= 20000).length
   const goldCount = customers.filter(
@@ -75,7 +75,7 @@ export function calculateCustomerRegistryStats(
   }
 }
 
-export function calculateOrderRegistryStats(orders: Order[]): OrderRegistryStats {
+export function calculateOrderListStats(orders: Order[]): OrderListStats {
   const totalRevenue = orders.reduce(
     (sum, order) => sum + (order.status !== "cancelled" ? order.total : 0),
     0
@@ -89,7 +89,7 @@ export function calculateOrderRegistryStats(orders: Order[]): OrderRegistryStats
   }
 }
 
-export function filterOrdersForRegistry(
+export function filterAndSortOrders(
   orders: Order[],
   products: Product[],
   searchText: string,
@@ -114,7 +114,7 @@ export function filterOrdersForRegistry(
   })
 }
 
-export function filterSupportTickets(
+export function filterAndSortSupportTickets(
   tickets: SupportTicket[],
   keywordRaw: string,
   statusFilter: "all" | SupportStatus

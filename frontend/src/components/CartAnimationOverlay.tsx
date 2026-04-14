@@ -60,19 +60,19 @@ export default function CartAnimationOverlay() {
 
   // Function to create a "Gold Dust" burst at a specific coordinate
   const triggerSparkles = useCallback((x: number, y: number) => {
-    const total = 14
+    const total = 8
     const newSparkles = Array.from({ length: total }).map((_, i) => {
       const angle = (Math.PI * 2 * i) / total + Math.random() * 0.35
-      const distance = 22 + Math.random() * 26
+      const distance = 14 + Math.random() * 18
       return {
         id: `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 8)}`,
         x,
         y,
         dx: Math.cos(angle) * distance,
-        dy: Math.sin(angle) * distance - 4,
-        size: 1.5 + Math.random() * 2.2,
-        duration: 0.5 + Math.random() * 0.28,
-        delay: Math.random() * 0.06,
+        dy: Math.sin(angle) * distance - 2,
+        size: 1.1 + Math.random() * 1.4,
+        duration: 0.62 + Math.random() * 0.34,
+        delay: Math.random() * 0.08,
       }
     })
 
@@ -81,7 +81,7 @@ export default function CartAnimationOverlay() {
     setTimeout(() => {
       const ids = new Set(newSparkles.map((sparkle) => sparkle.id))
       setSparkles((prev) => prev.filter((sparkle) => !ids.has(sparkle.id)))
-    }, 900)
+    }, 1100)
   }, [])
 
   const triggerCartPulse = useCallback((x: number, y: number) => {
@@ -89,15 +89,15 @@ export default function CartAnimationOverlay() {
     setPulses((prev) => [...prev, { id: pulseId, x, y }])
     setTimeout(() => {
       setPulses((prev) => prev.filter((pulse) => pulse.id !== pulseId))
-    }, 520)
+    }, 700)
   }, [])
 
   const getMidX = (item: FlyingItem) => item.startX + (cartPos.x - item.startX) * 0.35
-  const getLateX = (item: FlyingItem) => item.startX + (cartPos.x - item.startX) * 0.72
-  const getArcY = (item: FlyingItem) => Math.min(item.startY, cartPos.y) - Math.max(130, Math.abs(cartPos.x - item.startX) * 0.13)
-  const getNearCartY = () => cartPos.y - 18
+  const getLateX = (item: FlyingItem) => item.startX + (cartPos.x - item.startX) * 0.75
+  const getArcY = (item: FlyingItem) => Math.min(item.startY, cartPos.y) - Math.max(84, Math.abs(cartPos.x - item.startX) * 0.09)
+  const getNearCartY = () => cartPos.y - 12
 
-  const shimmerDuration = 0.68
+  const shimmerDuration = 1.05
 
   return (
     // The overlay is fixed and covers the whole screen but doesn't block clicks
@@ -110,9 +110,9 @@ export default function CartAnimationOverlay() {
             initial={{
               x: item.startX - item.width / 2,
               y: item.startY - item.width / 2,
-              scale: 0.72,
+              scale: 0.62,
               opacity: 0,
-              rotate: -8,
+              rotate: -4,
             }}
             animate={{
               x: [
@@ -127,12 +127,12 @@ export default function CartAnimationOverlay() {
                 getNearCartY() - item.width / 2,
                 cartPos.y - item.width / 2,
               ],
-              scale: [0.72, 0.88, 0.66, 0.2],
-              opacity: [0, 1, 1, 0],
-              rotate: [0, 8, -4, 0],
+              scale: [0.62, 0.74, 0.56, 0.18],
+              opacity: [0, 0.96, 0.86, 0],
+              rotate: [0, 4, -2, 0],
             }}
             transition={{
-              duration: 1.35,
+              duration: 1.85,
               ease: [0.22, 1, 0.36, 1],
             }}
             onAnimationComplete={() => {
@@ -146,11 +146,11 @@ export default function CartAnimationOverlay() {
               <motion.div
                 animate={{
                   boxShadow: [
-                    '0 0 16px rgba(212,175,55,0.35)',
-                    '0 0 44px rgba(212,175,55,0.65)',
-                    '0 0 16px rgba(212,175,55,0.35)',
+                    '0 0 10px rgba(212,175,55,0.22)',
+                    '0 0 24px rgba(212,175,55,0.4)',
+                    '0 0 10px rgba(212,175,55,0.22)',
                   ],
-                  opacity: [0.3, 0.85, 0.3],
+                  opacity: [0.2, 0.5, 0.2],
                 }}
                 transition={{ duration: shimmerDuration, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute inset-0 rounded-full bg-accent/20 blur-xl"
@@ -161,7 +161,7 @@ export default function CartAnimationOverlay() {
                   width: item.width,
                   height: item.width,
                   objectFit: 'cover',
-                  filter: 'drop-shadow(0 8px 16px rgba(22,22,22,0.24)) drop-shadow(0 0 10px rgba(212,175,55,0.72))',
+                  filter: 'drop-shadow(0 6px 12px rgba(22,22,22,0.2)) drop-shadow(0 0 6px rgba(212,175,55,0.45))',
                 }}
                 className="relative z-10 rounded-full border border-accent/40 bg-white"
               />
@@ -177,7 +177,7 @@ export default function CartAnimationOverlay() {
               x: sparkle.x + sparkle.dx,
               y: sparkle.y + sparkle.dy,
               scale: [0, 1, 0],
-              opacity: [0.95, 0.72, 0],
+              opacity: [0.72, 0.44, 0],
             }}
             transition={{ duration: sparkle.duration, delay: sparkle.delay, ease: 'easeOut' }}
             style={{
@@ -186,7 +186,7 @@ export default function CartAnimationOverlay() {
               height: sparkle.size,
               borderRadius: '50%',
               backgroundColor: '#D4AF37',
-              boxShadow: '0 0 10px rgba(212,175,55,0.7)',
+              boxShadow: '0 0 5px rgba(212,175,55,0.45)',
               zIndex: 20,
             }}
           />
@@ -195,10 +195,10 @@ export default function CartAnimationOverlay() {
         {pulses.map((pulse) => (
           <motion.div
             key={pulse.id}
-            initial={{ x: pulse.x - 10, y: pulse.y - 10, scale: 0.2, opacity: 0.9 }}
-            animate={{ scale: [0.2, 1.8], opacity: [0.9, 0] }}
-            transition={{ duration: 0.48, ease: 'easeOut' }}
-            className="absolute h-5 w-5 rounded-full border border-accent/60"
+            initial={{ x: pulse.x - 8, y: pulse.y - 8, scale: 0.2, opacity: 0.75 }}
+            animate={{ scale: [0.2, 1.4], opacity: [0.75, 0] }}
+            transition={{ duration: 0.68, ease: 'easeOut' }}
+            className="absolute h-4 w-4 rounded-full border border-accent/50"
           />
         ))}
       </AnimatePresence>

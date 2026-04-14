@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google"
-import AdminDashboard from "./AdminPage/adminDashboard"
-import UserPage from "./UserPage/userPage"
+import AdminControlCenter from "@/pages/AccountPage/AdminPage/AdminControlCenter"
+import CustomerDashboardPage from "./UserPage/CustomerDashboardPage"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { hasCompleteCustomerProfile, useCustomerStore } from "@/stores/useCustomerStore"
 import { useOrderStore } from "@/stores/useOrderStore"
@@ -42,6 +42,18 @@ export default function AccountPage() {
       void fetchOrders(null, activeCustomerEmail)
     }
   }, [activeCustomerEmail, fetchOrders])
+
+  useEffect(() => {
+    if (errors.username?.message) {
+      toast.error(errors.username.message)
+    }
+  }, [errors.username?.message])
+
+  useEffect(() => {
+    if (errors.password?.message) {
+      toast.error(errors.password.message)
+    }
+  }, [errors.password?.message])
 
   const handleAdminLogin = async (data: AdminLoginFormData) => {
     const success = await adminLogin(data.username, data.password)
@@ -94,9 +106,6 @@ export default function AccountPage() {
         placeholder="Username"
         {...register("username")}
       />
-      {errors.username && (
-        <p className="text-sm text-red-500">{errors.username.message}</p>
-      )}
 
       <input
         type="password"
@@ -104,9 +113,6 @@ export default function AccountPage() {
         placeholder="Password"
         {...register("password")}
       />
-      {errors.password && (
-        <p className="text-sm text-red-500">{errors.password.message}</p>
-      )}
 
       <button
         type="submit"
@@ -124,7 +130,7 @@ export default function AccountPage() {
 
   if (isGuest) {
     return (
-      <div className="mx-auto mt-12 w-full max-w-[400px] rounded-xl border border-gray-100 bg-white p-8 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.08)]">
+      <div className="liquid-glass-strong mx-auto mt-12 w-full max-w-[400px] rounded-xl border border-gray-100 p-8 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.08)]">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">
             Welcome Back
@@ -161,7 +167,7 @@ export default function AccountPage() {
     return (
       <div className="flex w-full justify-center pt-8">
         <div className="w-full max-w-7xl px-4 md:px-8">
-          <AdminDashboard currentAdmin={admin} handleLogout={() => void logout()} />
+          <AdminControlCenter currentAdmin={admin} handleLogout={() => void logout()} />
         </div>
       </div>
     )
@@ -171,12 +177,12 @@ export default function AccountPage() {
     return (
       <div className="relative">
         <div className="pointer-events-none select-none blur-[3px] opacity-70">
-          <UserPage />
+          <CustomerDashboardPage />
         </div>
         <CustomerProfileRequiredForm />
       </div>
     )
   }
 
-  return <UserPage />
+  return <CustomerDashboardPage />
 }

@@ -27,7 +27,7 @@ const ProductDetailPage = () => {
     if (!product) return
     const image = e.currentTarget.closest(".product-detail-shell")?.querySelector("img")
     const rect = image?.getBoundingClientRect() ?? e.currentTarget.getBoundingClientRect()
-    const flySize = Math.min(104, Math.max(64, rect.width * 0.26))
+    const flySize = Math.min(72, Math.max(40, rect.width * 0.18))
     triggerAnimation(product.imageUrl, rect.left + rect.width / 2, rect.top + rect.height / 2, flySize)
     addToCart(product.id, product.stock)
   }

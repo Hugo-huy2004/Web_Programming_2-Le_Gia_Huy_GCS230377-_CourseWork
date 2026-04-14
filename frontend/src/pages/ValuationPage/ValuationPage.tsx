@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { usePriceStore } from "@/stores/usePriceStore"
 import { formatUsd } from "@/lib/formatUtils"
 import { getMetalValuationRows } from "@/lib/metalPriceView"
+import { toast } from "sonner"
 
 const ValuationPage = () => {
   const { goldSnapshot, goldLoading, goldError, refreshGoldPrices } = usePriceStore()
@@ -10,6 +11,15 @@ const ValuationPage = () => {
   useEffect(() => {
     void refreshGoldPrices()
   }, [refreshGoldPrices])
+
+  useEffect(() => {
+    if (!goldError) {
+      toast.dismiss("valuation-sync-error")
+      return
+    }
+
+    toast.error(goldError, { id: "valuation-sync-error", duration: 4000 })
+  }, [goldError])
 
   const valuationRows = goldSnapshot ? getMetalValuationRows(goldSnapshot) : []
 
@@ -65,12 +75,6 @@ const ValuationPage = () => {
               </table>
             </div>
           </div>
-        </div>
-      )}
-
-      {goldError && (
-        <div className="p-6 rounded-sm bg-destructive/5 border border-destructive/20 text-center">
-          <p className="text-xs uppercase tracking-widest font-bold text-destructive">{goldError}</p>
         </div>
       )}
     </div>

@@ -21,7 +21,7 @@ export function AppointmentListItem({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.5 }}
-      className="group overflow-hidden rounded-sm border border-border bg-white transition-all duration-500 hover:border-accent hover:shadow-sm"
+      className="group liquid-glass overflow-hidden rounded-sm border border-border transition-all duration-500 hover:border-accent hover:shadow-sm"
     >
       <div className="flex flex-col gap-10 p-8 lg:flex-row lg:items-center">
         <div className="shrink-0 space-y-2 lg:w-72 lg:border-r lg:border-border/40 lg:pr-10">
@@ -51,7 +51,7 @@ export function AppointmentListItem({
           </div>
 
           {appointment.note && (
-            <div className="rounded-sm border-l-2 border-accent bg-secondary/20 p-5">
+            <div className="liquid-glass rounded-sm border-l-2 border-accent p-5">
               <p className="small-caps mb-2 text-[8px] text-accent">Registry Manifest</p>
               <p className="font-serif text-[13px] italic leading-relaxed text-muted-foreground">
                 "{appointment.note}"

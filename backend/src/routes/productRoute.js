@@ -8,7 +8,6 @@ const router = express.Router();
 
 router.get("/", getAllProducts);
 router.get("/:id", getProductById);
-
 router.patch("/:id", requireAdminApiKey, upload.single("image"), editProduct);
 router.put("/:id", requireAdminApiKey, upload.single("image"), editProduct);
 router.post("/sync", requireAdminApiKey, syncProducts);

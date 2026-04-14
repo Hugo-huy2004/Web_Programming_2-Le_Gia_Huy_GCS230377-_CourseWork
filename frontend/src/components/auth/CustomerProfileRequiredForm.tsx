@@ -50,7 +50,7 @@ export default function CustomerProfileRequiredForm() {
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-background/35 px-4 py-6 backdrop-blur-md md:px-8">
-      <section className="w-full max-w-xl space-y-6 rounded-sm border border-border bg-white p-5 shadow-editorial md:p-7">
+      <section className="liquid-glass-strong w-full max-w-xl space-y-6 rounded-sm border border-border p-5 shadow-editorial md:p-7">
         <header className="space-y-2 border-b border-border pb-4">
           <p className="small-caps text-accent">One-Time Member Setup</p>
           <h1 className="font-serif text-2xl italic tracking-tight text-foreground md:text-3xl">

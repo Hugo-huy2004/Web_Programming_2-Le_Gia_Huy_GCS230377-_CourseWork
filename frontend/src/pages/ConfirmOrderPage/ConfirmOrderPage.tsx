@@ -1,16 +1,7 @@
-import {
-  CollectorIdentitySection
-} from "@/components/order/CollectorIdentitySection"
-import {
-  FinancialFrameworkSection
-} from "@/components/order/FinancialFrameworkSection"
-import {
-  IdentificationRequiredState,
-  OrderCompletedState
-} from "@/components/order/ConfirmOrderStates"
-import {
-  OrderSummaryAside
-} from "@/components/order/OrderSummaryAside"
+import { CollectorIdentitySection } from "@/components/order/CollectorIdentitySection"
+import { FinancialFrameworkSection } from "@/components/order/FinancialFrameworkSection"
+import { IdentificationRequiredState, OrderCompletedState } from "@/components/order/ConfirmOrderStates"
+import { OrderSummaryAside } from "@/components/order/OrderSummaryAside"
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"

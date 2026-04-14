@@ -12,7 +12,7 @@ export function OrderAnalyticsCards({ totalRevenueText, pendingCount, totalOrder
         { label: "Active Pending Acquisitions", value: pendingCount, accent: true },
         { label: "Total Heritage Acquisitions", value: totalOrders, accent: false },
       ].map((stat, idx) => (
-        <div key={idx} className="space-y-3 border border-border bg-white p-8 shadow-editorial">
+        <div key={idx} className="liquid-glass space-y-3 border border-border p-8 shadow-editorial">
           <p className="small-caps text-[10px] font-bold tracking-[0.2em] text-muted-foreground">{stat.label}</p>
           <p className={`font-serif text-3xl tracking-tight md:text-4xl ${stat.accent ? "text-accent italic" : "text-foreground"}`}>
             {stat.value}

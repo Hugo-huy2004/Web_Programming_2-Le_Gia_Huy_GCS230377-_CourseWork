@@ -1,10 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware'
 import type { CustomerAccount, CustomerProfile } from '../types/store'
-import {
-  customerApiService,
-  type CustomerDto,
-} from '../services/customerApiService'
+import {customerApiService,type CustomerDto,} from '../services/customerApiService'
 import { loginCustomerWithGoogle } from '../services/googleAuthService'
 import { useAuthStore } from './useAuthStore'
 import type { CredentialResponse } from '@react-oauth/google'
@@ -129,7 +126,6 @@ export const useCustomerStore = create<CustomerStoreState>()(
           const mapped = mapCustomerDto(customer)
 
           set({
-            // Keep only the current customer profile in customer session state.
             customers: [mapped],
             activeCustomerEmail: mapped.email,
             activeCustomer: mapped,
@@ -203,15 +199,17 @@ export const useCustomerStore = create<CustomerStoreState>()(
           return { ok: false, message: 'Customer email is required.' }
         }
 
+        const existing = customers.find((customer) => customer.email === normalizedEmail)
+
         const nextProfile: CustomerProfile = {
-          fullName: profile.fullName.trim(),
-          birthday: profile.birthday,
-          phone: profile.phone.trim(),
-          address: profile.address.trim(),
+          fullName: profile.fullName.trim() || existing?.profile.fullName || "",
+          birthday: profile.birthday.trim() || existing?.profile.birthday || "",
+          phone: profile.phone.trim() || existing?.profile.phone || "",
+          address: profile.address.trim() || existing?.profile.address || "",
         }
 
-        if (!nextProfile.fullName || !nextProfile.birthday || !nextProfile.phone || !nextProfile.address) {
-          return { ok: false, message: 'All profile fields are required for registry.' }
+        if (!nextProfile.fullName && !nextProfile.birthday && !nextProfile.phone && !nextProfile.address) {
+          return { ok: false, message: 'At least one profile field is required for update.' }
         }
 
         try {

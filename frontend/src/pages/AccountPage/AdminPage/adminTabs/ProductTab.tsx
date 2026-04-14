@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from "react"
 import { useProductStore } from "@/stores/useProductStore"
 import { type Product } from "@/types/product"
 import { AdminSearchInput } from "@/components/admin/AdminSearchInput"
-import { ProductFormModal, type ProductFormState } from "@/components/admin/products/ProductFormModal"
-import { ProductTabHeader } from "@/components/admin/products/ProductTabHeader"
-import { ProductFeedbackMessage } from "@/components/admin/products/ProductFeedbackMessage"
 import { ProductGrid } from "@/components/admin/products/ProductGrid"
+import { ProductTabHeader } from "@/components/admin/products/ProductTabHeader"
+import { ProductFormModal, type ProductFormState } from "@/components/admin/products/ProductFormModal"
 import { confirmWithToast } from "@/lib/toastConfirm"
 import { toast } from "sonner"
  
@@ -36,7 +35,6 @@ export default function ProductTab() {
   } = useProductStore()
  
   const [search, setSearch] = useState("")
-  const [statusMessage, setStatusMessage] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
  
@@ -106,19 +104,18 @@ export default function ProductTab() {
     try {
       if (editingId) await updateProduct(editingId, payload)
       else await createProduct(payload)
-      setStatusMessage("Registry Synchronized Successfully")
+      toast.success("Registry synchronized successfully.")
       setIsModalOpen(false)
-      setTimeout(() => setStatusMessage(""), 5000)
     } catch (err: unknown) { 
       const error = err as Error
-      setStatusMessage(error.message) 
+      toast.error(error.message || "Synchronization failed.")
     }
   }
 
   const handleUploadImage = async (file: File): Promise<string | null> => {
     const result = await uploadProductImage(file)
     if (!result.ok || !result.publicUrl) {
-      setStatusMessage(result.message || "Image upload failed.")
+      toast.error(result.message || "Image upload failed.")
       return null
     }
 
@@ -126,16 +123,19 @@ export default function ProductTab() {
   }
  
   return (
-    <div className="space-y-10 py-6 animate-in fade-in duration-1000">
+    <div className="animate-in space-y-6 py-4 fade-in duration-700 md:space-y-8 md:py-6">
       <ProductTabHeader onAddNew={handleAddNew} />
 
-      <ProductFeedbackMessage message={statusMessage} onClear={() => setStatusMessage("")} />
-
       <AdminSearchInput
-        placeholder="Locate specific historical masterpieces or series..."
+        placeholder="Search by name or category..."
         value={search}
         onChange={setSearch}
+        className="max-w-xl"
       />
+
+      <p className="text-xs text-muted-foreground">
+        Showing {filteredProducts.length} product{filteredProducts.length === 1 ? "" : "s"}
+      </p>
 
       <ProductGrid
         products={filteredProducts}

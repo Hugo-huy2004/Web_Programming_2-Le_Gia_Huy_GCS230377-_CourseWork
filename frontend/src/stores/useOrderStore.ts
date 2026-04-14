@@ -14,7 +14,7 @@ interface OrderStoreState {
   setOrders: (orders: Order[]) => void
   fetchOrders: (currentAdmin: string | null, activeCustomerEmail: string | null) => Promise<void>
   placeOrder: (input: PlaceOrderInput) => Promise<{ ok: boolean; message: string; orderId?: string; orderCode?: string }>
-  updateOrderStatus: (orderId: string, nextStatus: OrderStatus) => Promise<void>
+  updateOrderStatus: (orderId: string, nextStatus: OrderStatus) => Promise<{ ok: boolean; message: string }>
   deleteOrder: (orderId: string) => Promise<{ ok: boolean; message: string }>
 
   seenStatuses: Record<string, OrderStatus>
@@ -225,7 +225,7 @@ export const useOrderStore = create<OrderStoreState>((set, get) => ({
     const { orders } = get()
     const order = orders.find((item) => item.id === orderId)
     if (!order) {
-      return
+      return { ok: false, message: 'Order not found.' }
     }
 
     const settingsStore = useSettingsStore.getState()
@@ -237,7 +237,7 @@ export const useOrderStore = create<OrderStoreState>((set, get) => ({
       const result = await orderApiService.updateStatus(orderId, nextStatus)
       const updated = mapOrderDto(result.order)
       if (!updated) {
-        return
+        return { ok: false, message: 'Invalid order status response.' }
       }
 
       if (nextStatus === 'cancelled' && order.inventoryReserved) {
@@ -260,8 +260,13 @@ export const useOrderStore = create<OrderStoreState>((set, get) => ({
       set((state) => ({
         orders: state.orders.map((current) => (current.id === orderId ? updated : current)),
       }))
+      return { ok: true, message: result.message || 'Order status updated.' }
     } catch (error) {
       console.error('[order-status-update-failed]', error)
+      return {
+        ok: false,
+        message: error instanceof Error ? error.message : 'Failed to update order status.',
+      }
     }
   },
 

@@ -6,23 +6,60 @@ type TierInfo = {
   color: string
 }
 
-type CustomerRegistryTableProps = {
+type CustomerListTableProps = {
   customers: CustomerAccount[]
   formatUsd: (value: number) => string
   getTierLabel: (spent: number) => TierInfo
-  onOpenDossier: (customer: CustomerAccount) => void
+  onOpenCustomerDetails: (customer: CustomerAccount) => void
 }
 
-export function CustomerRegistryTable({ customers, formatUsd, getTierLabel, onOpenDossier }: CustomerRegistryTableProps) {
+export function CustomerListTable({ customers, formatUsd, getTierLabel, onOpenCustomerDetails }: CustomerListTableProps) {
   return (
-    <div className="overflow-hidden rounded-sm border border-border/40 bg-white shadow-editorial">
-      <div className="overflow-x-auto">
+    <div className="liquid-glass overflow-hidden rounded-sm border border-border/40 shadow-editorial">
+      <div className="space-y-3 p-3 md:hidden">
+        {customers.map((customer) => {
+          const tier = getTierLabel(customer.totalSpent)
+          return (
+            <button
+              key={customer.email}
+              onClick={() => onOpenCustomerDetails(customer)}
+              className="w-full rounded-sm border border-border/30 bg-background/70 p-4 text-left transition-all hover:border-accent"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-serif text-base italic text-foreground truncate">{customer.profile.fullName || "-"}</p>
+                  <p className="mt-1 text-[11px] lowercase text-muted-foreground/60 break-all">{customer.email}</p>
+                </div>
+                <span className={`inline-block rounded-none border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] ${tier.color}`}>
+                  {tier.label}
+                </span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-[10px]">
+                <div>
+                  <p className="small-caps text-muted-foreground/60">Orders</p>
+                  <p className="font-mono text-foreground/70">{customer.totalOrders}</p>
+                </div>
+                <div>
+                  <p className="small-caps text-muted-foreground/60">Points</p>
+                  <p className="font-mono text-accent">{customer.loyaltyPoints}</p>
+                </div>
+                <div>
+                  <p className="small-caps text-muted-foreground/60">Value</p>
+                  <p className="font-serif italic text-foreground">{formatUsd(customer.totalSpent)}</p>
+                </div>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="hidden md:block overflow-x-auto">
       <table className="min-w-[760px] w-full border-collapse text-left">
         <thead>
           <tr className="border-b border-border/40 bg-secondary/30">
-            <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Legal Identity / Email</th>
+            <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Full Name / Email</th>
             <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Tier</th>
-            <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Acq.</th>
+            <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Orders</th>
             <th className="small-caps p-6 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Points</th>
             <th className="small-caps p-6 text-right text-[10px] font-bold tracking-[0.2em] text-muted-foreground">Portfolio Value</th>
           </tr>
@@ -38,7 +75,7 @@ export function CustomerRegistryTable({ customers, formatUsd, getTierLabel, onOp
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  onClick={() => onOpenDossier(customer)}
+                  onClick={() => onOpenCustomerDetails(customer)}
                   className="group cursor-pointer border-b border-border/20 transition-all duration-500 last:border-0 hover:bg-muted/30"
                 >
                   <td className="p-6">

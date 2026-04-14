@@ -1,29 +1,22 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { Award, Globe, Key, MapPin, Save } from "lucide-react"
+import { Award, Globe, Key, Save } from "lucide-react"
 
 type GovernanceSettingsSectionProps = {
-  message: string
   shipperFee: string
   onShipperFeeChange: (value: string) => void
   dollarsPerPoint: string
   onDollarsPerPointChange: (value: string) => void
   minimumPointsToRedeem: string
   onMinimumPointsToRedeemChange: (value: string) => void
-  pickupAddress: string
-  onPickupAddressChange: (value: string) => void
   onSaveSettings: () => void
 }
 
 export function GovernanceSettingsSection({
-  message,
   shipperFee,
   onShipperFeeChange,
   dollarsPerPoint,
   onDollarsPerPointChange,
   minimumPointsToRedeem,
   onMinimumPointsToRedeemChange,
-  pickupAddress,
-  onPickupAddressChange,
   onSaveSettings,
 }: GovernanceSettingsSectionProps) {
   return (
@@ -35,18 +28,6 @@ export function GovernanceSettingsSection({
           </p>
           <h2 className="font-serif text-4xl italic tracking-tight text-foreground">Governance Manifest</h2>
         </div>
-        <AnimatePresence>
-          {message && (
-            <motion.p
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              className="small-caps text-[13px] font-serif italic text-accent"
-            >
-              {message}
-            </motion.p>
-          )}
-        </AnimatePresence>
       </div>
 
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
@@ -103,21 +84,6 @@ export function GovernanceSettingsSection({
             <Save className="h-4 w-4" />
             Commit Governance
           </button>
-        </div>
-
-        <div className="space-y-4 md:col-span-2 lg:col-span-4">
-          <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-muted-foreground">
-            Heritage Collection Point (Address Registry)
-          </label>
-          <div className="group relative">
-            <MapPin className="absolute bottom-2 left-0 h-4 w-4 text-muted-foreground/20 transition-colors group-focus-within:text-accent" />
-            <input
-              type="text"
-              value={pickupAddress}
-              onChange={(e) => onPickupAddressChange(e.target.value)}
-              className="w-full border-b border-border bg-transparent py-2 pl-8 font-serif text-lg italic text-foreground outline-none transition-all duration-700 focus:border-accent"
-            />
-          </div>
         </div>
       </div>
     </section>

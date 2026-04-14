@@ -30,7 +30,7 @@ export function OrderLedgerCard({
   const StatusIcon = iconMap[config.iconName]
 
   return (
-    <div className="group rounded-sm border border-border bg-white p-8 transition-all duration-700 hover:border-accent hover:shadow-editorial md:p-10">
+    <div className="group liquid-glass rounded-sm border border-border p-8 transition-all duration-700 hover:border-accent hover:shadow-editorial md:p-10">
       <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:gap-10">
         <div className="space-y-2 lg:min-w-[180px]">
           <p className="small-caps text-[9px] font-bold tracking-[0.2em] text-accent">

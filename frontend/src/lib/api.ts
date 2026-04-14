@@ -1,4 +1,6 @@
 import { readPersistedAccessToken } from "@/lib/authSession"
+import { emitSessionExpired } from "@/lib/authEvents"
+import { useUiStore } from "@/stores/useUiStore"
 import type {
   AppointmentStatus,
   OrderStatus,
@@ -29,44 +31,55 @@ async function request<T>(path: string, options?: RequestInit & { admin?: boolea
   const isFormData = options?.body instanceof FormData
   const token = readPersistedAccessToken()
   const finalHeaders = new Headers(options?.headers)
+  const { beginRequest, endRequest } = useUiStore.getState()
 
-  if (admin) {
-    attachAdminApiKey(finalHeaders)
+  beginRequest()
+
+  try {
+    if (admin) {
+      attachAdminApiKey(finalHeaders)
+    }
+
+    if (options?.body && !isFormData && !finalHeaders.has("Content-Type")) {
+      finalHeaders.set("Content-Type", "application/json")
+    }
+
+    if (token && !finalHeaders.has("Authorization")) {
+      finalHeaders.set("Authorization", `Bearer ${token}`)
+    }
+
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      ...requestInit,
+      headers: finalHeaders,
+    })
+
+    const contentType = response.headers.get("content-type") ?? ""
+    let data: (T & { message?: string }) | null = null
+    let rawText = ""
+
+    if (contentType.includes("application/json")) {
+      data = (await response.json()) as T & { message?: string }
+    } else {
+      rawText = await response.text()
+    }
+
+    if (!response.ok) {
+      const message = data?.message || rawText || `Request failed: ${response.status}`
+      const lowered = message.toLowerCase()
+      if (response.status === 401 && (lowered.includes("expired") || lowered.includes("not valid") || lowered.includes("missing access token"))) {
+        emitSessionExpired(message)
+      }
+      throw new Error(message)
+    }
+
+    if (!data) {
+      throw new Error("Invalid server response format.")
+    }
+
+    return data
+  } finally {
+    endRequest()
   }
-
-  if (options?.body && !isFormData && !finalHeaders.has("Content-Type")) {
-    finalHeaders.set("Content-Type", "application/json")
-  }
-
-  if (token && !finalHeaders.has("Authorization")) {
-    finalHeaders.set("Authorization", `Bearer ${token}`)
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...requestInit,
-    headers: finalHeaders,
-  })
-
-  const contentType = response.headers.get("content-type") ?? ""
-  let data: (T & { message?: string }) | null = null
-  let rawText = ""
-
-  if (contentType.includes("application/json")) {
-    data = (await response.json()) as T & { message?: string }
-  } else {
-    rawText = await response.text()
-  }
-
-  if (!response.ok) {
-    const message = data?.message || rawText || `Request failed: ${response.status}`
-    throw new Error(message)
-  }
-
-  if (!data) {
-    throw new Error("Invalid server response format.")
-  }
-
-  return data
 }
 
 export type AppointmentPayload = {

@@ -5,15 +5,16 @@ import type { CustomerAccount, Order } from "@/types/store"
 import { useAppStore } from "@/stores/useAppStore"
 import type { CustomerSortOption, CustomerTierFilter } from "@/constants/customerRegistryOptions"
 import {
-  calculateCustomerRegistryStats,
+  calculateCustomerListStats,
   filterAndSortCustomers,
   getCustomerTierBadge,
 } from "@/lib/registryUtils"
-import { CustomerDossierDrawer } from "@/components/admin/customers/CustomerDossierDrawer"
-import { CustomerRegistryTable } from "@/components/admin/customers/CustomerRegistryTable"
-import { CustomerRegistryControls } from "@/components/admin/customers/CustomerRegistryControls"
-import { CustomerRegistryStats } from "@/components/admin/customers/CustomerRegistryStats"
+import { CustomerDetailsDrawer } from "@/components/admin/customers/CustomerDetailsDrawer"
+import { CustomerListTable } from "@/components/admin/customers/CustomerListTable"
+import { CustomerFiltersPanel } from "@/components/admin/customers/CustomerFiltersPanel"
+import { CustomerStatsCards } from "@/components/admin/customers/CustomerStatsCards"
 import { CustomerTabHeader } from "@/components/admin/customers/CustomerTabHeader"
+import { toast } from "sonner"
  
 const CustomerTab = () => {
   const { customers, fetchAllCustomers, updateCustomerProfileByEmail } = useCustomerStore()
@@ -27,9 +28,8 @@ const CustomerTab = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerAccount | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [editForm, setEditForm] = useState({ fullName: "", phone: "", address: "", birthday: "" })
-  const [saveStatus, setSaveStatus] = useState("")
 
-  const refreshRegistryData = async () => {
+  const refreshCustomerData = async () => {
     setIsRefreshing(true)
     try {
       await Promise.all([fetchAllCustomers(), fetchOrders("admin", null)])
@@ -39,7 +39,7 @@ const CustomerTab = () => {
   }
 
   useEffect(() => {
-    void refreshRegistryData()
+    void refreshCustomerData()
   }, [fetchAllCustomers, fetchOrders])
 
   const filteredCustomers = useMemo(() => {
@@ -47,10 +47,10 @@ const CustomerTab = () => {
   }, [customers, search, tierFilter, sortBy])
 
   const stats = useMemo(() => {
-    return calculateCustomerRegistryStats(customers, filteredCustomers)
+    return calculateCustomerListStats(customers, filteredCustomers)
   }, [customers, filteredCustomers])
 
-  const handleOpenDossier = (customer: CustomerAccount) => {
+  const handleOpenCustomerDetails = (customer: CustomerAccount) => {
     setSelectedCustomer(customer)
     setEditForm({
       fullName: customer.profile.fullName || "",
@@ -58,22 +58,22 @@ const CustomerTab = () => {
       address: customer.profile.address || "",
       birthday: customer.profile.birthday || ""
     })
-    setSaveStatus("")
     setIsDrawerOpen(true)
   }
 
   const handleSaveProfile = async () => {
     if (!selectedCustomer) return
     try {
-      setSaveStatus("Synchronizing...")
       const result = await updateCustomerProfileByEmail(selectedCustomer.email, editForm)
-      if (result.message) {
-        setSaveStatus("Registry Updated")
-        await refreshRegistryData()
-        setTimeout(() => setSaveStatus(""), 3000)
+      if (result.ok) {
+        toast.success("Customer profile updated.")
+        await refreshCustomerData()
+        return
       }
+
+      toast.error(result.message || "Failed to update customer profile.")
     } catch (err) {
-      setSaveStatus("Synchronization Failed")
+      toast.error("Failed to update customer profile.")
     }
   }
 
@@ -85,14 +85,14 @@ const CustomerTab = () => {
     <div className="space-y-12 py-6 animate-in fade-in duration-1000">
       <CustomerTabHeader customerCount={customers.length} />
 
-      <CustomerRegistryStats
+      <CustomerStatsCards
         shown={stats.visibleCount}
         diamond={stats.diamondCount}
         gold={stats.goldCount}
         totalValueText={formatUsd(stats.totalPortfolioValue)}
       />
 
-      <CustomerRegistryControls
+      <CustomerFiltersPanel
         search={search}
         onSearchChange={setSearch}
         shownCount={filteredCustomers.length}
@@ -102,22 +102,21 @@ const CustomerTab = () => {
         sortBy={sortBy}
         onSortByChange={setSortBy}
         isRefreshing={isRefreshing}
-        onRefresh={() => void refreshRegistryData()}
+        onRefresh={() => void refreshCustomerData()}
       />
 
-      <CustomerRegistryTable
+      <CustomerListTable
         customers={filteredCustomers}
         formatUsd={formatUsd}
         getTierLabel={getCustomerTierBadge}
-        onOpenDossier={handleOpenDossier}
+        onOpenCustomerDetails={handleOpenCustomerDetails}
       />
 
-      <CustomerDossierDrawer
+      <CustomerDetailsDrawer
         isOpen={isDrawerOpen}
         selectedCustomer={selectedCustomer}
         editForm={editForm}
         setEditForm={setEditForm}
-        saveStatus={saveStatus}
         customerOrders={customerOrders}
         formatUsd={formatUsd}
         onClose={() => setIsDrawerOpen(false)}

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion"
-import ProductItem from "@/pages/AccountPage/AdminPage/sectionAdminPage/ProductItem"
+import ProductItem from "@/components/admin/products/ProductItem"
 import type { Product } from "@/types/product"
 import type { ProductPricing } from "@/types/store"
 
@@ -13,7 +13,7 @@ type ProductGridProps = {
 
 export function ProductGrid({ products, getProductPricing, onEdit, onDelete, onRestock }: ProductGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
       <AnimatePresence mode="popLayout">
         {products.map((product) => (
           <motion.div

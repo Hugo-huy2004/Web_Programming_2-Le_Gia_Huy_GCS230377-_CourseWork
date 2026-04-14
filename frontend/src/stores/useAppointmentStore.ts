@@ -17,7 +17,7 @@ interface AppointmentStoreState {
     service: string
     note?: string
   }) => Promise<{ ok: boolean; message: string; appointmentId?: string }>
-  updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => Promise<void>
+  updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => Promise<{ ok: boolean; message: string }>
   deleteAppointment: (appointmentId: string) => Promise<{ ok: boolean; message: string }>
   newAppointmentCount: () => number
 }
@@ -70,8 +70,13 @@ export const useAppointmentStore = create<AppointmentStoreState>((set, get) => (
           appointment.id === appointmentId ? updated : appointment
         ),
       })
+      return { ok: true, message: result.message || 'Appointment status updated.' }
     } catch (error) {
       console.error('[appointment-status-update-failed]', error)
+      return {
+        ok: false,
+        message: error instanceof Error ? error.message : 'Failed to update appointment status',
+      }
     }
   },
 

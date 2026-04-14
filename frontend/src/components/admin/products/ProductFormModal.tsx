@@ -65,7 +65,7 @@ export function ProductFormModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative max-h-[90vh] w-full max-w-4xl space-y-12 overflow-y-auto rounded-sm border border-border/40 bg-white p-10 shadow-2xl md:p-16"
+          className="liquid-glass-strong relative max-h-[90vh] w-full max-w-4xl space-y-12 overflow-y-auto rounded-sm border border-border/40 p-10 shadow-2xl md:p-16"
         >
           <div className="flex items-start justify-between">
             <div className="space-y-2">
@@ -221,7 +221,7 @@ export function ProductFormModal({
                   </div>
                 )}
               </div>
-              <div className="rounded-sm border border-border/20 bg-secondary/30 p-6">
+              <div className="liquid-glass rounded-sm border border-border/20 p-6">
                 <div className="flex items-start gap-4">
                   <AlertCircle className="mt-0.5 h-5 w-5 text-accent opacity-60" />
                   <p className="font-serif text-[12px] italic leading-relaxed text-muted-foreground/80">

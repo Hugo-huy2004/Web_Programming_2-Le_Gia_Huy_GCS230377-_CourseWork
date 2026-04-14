@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { AdminEmptyState } from "@/components/admin/AdminEmptyState"
-import { AdminFilterBar } from "@/components/admin/AdminFilterBar"
 import { OrderAnalyticsCards } from "@/components/admin/orders/OrderAnalyticsCards"
 import { OrderLedgerCard } from "@/components/admin/orders/OrderLedgerCard"
 import { type Order, type OrderStatus } from "../../../../types/store"
@@ -10,17 +9,20 @@ import { useSettingsStore } from "@/stores/useSettingsStore"
 import { generateInvoice } from "@/lib/invoiceUtils"
 import { formatUsd } from "@/lib/formatUtils"
 import { toSafeArray } from "@/lib/filterUtils"
-import { calculateOrderRegistryStats, filterOrdersForRegistry } from "@/lib/registryUtils"
+import { calculateOrderListStats, filterAndSortOrders } from "@/lib/registryUtils"
 import { ORDER_STATUS_OPTIONS } from "@/constants/statusOptions"
 import { confirmWithToast } from "@/lib/toastConfirm"
 import { toast } from "sonner"
 
-const OrderTab = () => {
+type OrderTabProps = {
+    searchValue: string
+    statusFilter: "all" | OrderStatus
+}
+
+const OrderTab = ({ searchValue, statusFilter }: OrderTabProps) => {
     const { orders, updateOrderStatus, fetchOrders, deleteOrder } = useOrderStore()
     const { products } = useProductStore()
     const { currentAdmin } = useSettingsStore()
-    const [orderSearch, setOrderSearch] = useState("")
-    const [orderStatusFilter, setOrderStatusFilter] = useState<"all" | (typeof ORDER_STATUS_OPTIONS)[number]>("all")
 
     const safeOrders = toSafeArray(orders)
     const safeProducts = toSafeArray(products)
@@ -32,12 +34,12 @@ const OrderTab = () => {
     }, [fetchOrders, currentAdmin])
 
     const stats = useMemo(() => {
-        return calculateOrderRegistryStats(safeOrders)
+        return calculateOrderListStats(safeOrders)
     }, [safeOrders])
 
     const filteredOrders = useMemo(() => {
-        return filterOrdersForRegistry(safeOrders, safeProducts, orderSearch, orderStatusFilter)
-    }, [orderSearch, orderStatusFilter, safeOrders, safeProducts])
+        return filterAndSortOrders(safeOrders, safeProducts, searchValue, statusFilter)
+    }, [searchValue, statusFilter, safeOrders, safeProducts])
 
     const exportOrderInvoice = (order: Order) => {
         generateInvoice(order, formatUsd, safeProducts)
@@ -59,26 +61,22 @@ const OrderTab = () => {
         })
     }
 
+    const handleUpdateOrderStatus = async (orderId: string, nextStatus: OrderStatus) => {
+        const result = await updateOrderStatus(orderId, nextStatus)
+        if (result.ok) {
+            toast.success(`Order status updated to ${nextStatus}.`)
+            return
+        }
+
+        toast.error(result.message || "Failed to update order status.")
+    }
+
     return (
         <div className="space-y-12 py-6 animate-in fade-in duration-1000">
             <OrderAnalyticsCards
                 totalRevenueText={formatUsd(stats.totalRevenue)}
                 pendingCount={stats.pendingCount}
                 totalOrders={stats.totalOrders}
-            />
- 
-            <AdminFilterBar
-                searchLabel="Search Acquisition Ledger"
-                searchPlaceholder="Order Code, Collector Email or Identity..."
-                searchValue={orderSearch}
-                onSearchChange={setOrderSearch}
-                statusLabel="Logistics Filter"
-                statusValue={orderStatusFilter}
-                onStatusChange={(value) => setOrderStatusFilter(value as OrderStatus | "all")}
-                statusOptions={[
-                    { value: "all", label: "All Transactions" },
-                    ...ORDER_STATUS_OPTIONS.map((opt) => ({ value: opt, label: opt })),
-                ]}
             />
  
             {/* Order Ledger */}
@@ -91,7 +89,7 @@ const OrderTab = () => {
                             key={order.id}
                             order={order}
                             orderStatusOptions={ORDER_STATUS_OPTIONS}
-                            onUpdateOrderStatus={(orderId, nextStatus) => void updateOrderStatus(orderId, nextStatus)}
+                            onUpdateOrderStatus={(orderId, nextStatus) => void handleUpdateOrderStatus(orderId, nextStatus)}
                             onExportInvoice={exportOrderInvoice}
                             onDeleteOrder={(orderId) => void deleteOrderRecord(orderId)}
                             formatUsd={formatUsd}

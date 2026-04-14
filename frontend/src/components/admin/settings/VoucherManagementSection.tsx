@@ -32,7 +32,7 @@ export function VoucherManagementSection({
         <h2 className="font-serif text-4xl italic tracking-tight text-foreground">Valuation Vouchers</h2>
       </div>
 
-      <div className="grid grid-cols-1 items-end gap-12 rounded-sm border border-border/40 bg-secondary/20 p-10 md:grid-cols-3">
+      <div className="liquid-glass grid grid-cols-1 items-end gap-12 rounded-sm border border-border/40 p-10 md:grid-cols-3">
         <div className="space-y-4">
           <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-muted-foreground">Manifest Code</label>
           <input
@@ -72,7 +72,7 @@ export function VoucherManagementSection({
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="group flex flex-col justify-between border border-border bg-white p-8 transition-all duration-700 hover:shadow-editorial"
+              className="group liquid-glass flex flex-col justify-between border border-border p-8 transition-all duration-700 hover:shadow-editorial"
             >
               <div className="space-y-6">
                 <div className="flex items-start justify-between">

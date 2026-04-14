@@ -36,8 +36,7 @@ const SettingTab = () => {
   } = useVoucherStore()
 
   const { formatUsd } = useAppStore()
- 
-  const [message, setMessage] = useState("")
+
   const [voucherCode, setVoucherCode] = useState("")
   const [voucherDiscountAmount, setVoucherDiscountAmount] = useState("0")
   const [newAdminUsername, setNewAdminUsername] = useState("")
@@ -45,7 +44,6 @@ const SettingTab = () => {
   const [shipperFee, setShipperFee] = useState(String(settings.shipperFee))
   const [dollarsPerPoint, setDollarsPerPoint] = useState(String(settings.dollarsPerPoint))
   const [minimumPointsToRedeem, setMinimumPointsToRedeem] = useState(String(settings.minimumPointsToRedeem))
-  const [pickupAddress, setPickupAddress] = useState(settings.pickupAddress)
  
   useEffect(() => {
     fetchSettings()
@@ -58,7 +56,6 @@ const SettingTab = () => {
     setShipperFee(String(settings.shipperFee ?? 25))
     setDollarsPerPoint(String(settings.dollarsPerPoint ?? 100))
     setMinimumPointsToRedeem(String(settings.minimumPointsToRedeem ?? 10))
-    setPickupAddress(settings.pickupAddress ?? "HWJ Headquarters, 20 Cong Hoa Garden, Tan Binh Ward, Hoc Chi Minh City, Vietnam")
   }, [settings])
  
   const handleSaveSettings = async () => {
@@ -66,44 +63,48 @@ const SettingTab = () => {
       shipperFee: parseNumber(shipperFee),
       dollarsPerPoint: parseNumber(dollarsPerPoint),
       minimumPointsToRedeem: parseNonNegativeInteger(minimumPointsToRedeem),
-      pickupAddress,
     })
-    setMessage(result.message)
-    setTimeout(() => setMessage(""), 3000)
+    if (result.ok) {
+      toast.success(result.message || "Governance updated successfully.")
+      return
+    }
+
+    toast.error(result.message || "Failed to update governance settings.")
   }
  
   const handleAddVoucher = async () => {
     const result = await createVoucher(voucherCode, parseNumber(voucherDiscountAmount))
-    setMessage(result.message)
     if (result.ok) {
+      toast.success(result.message || "Voucher created successfully.")
       setVoucherCode("")
       setVoucherDiscountAmount("0")
+      return
     }
-    setTimeout(() => setMessage(""), 3000)
+
+    toast.error(result.message || "Failed to create voucher.")
   }
  
   const handleAddAdmin = async () => {
     const result = await createAdminAccount(newAdminUsername, newAdminPassword)
-    setMessage(result.message)
     if (result.ok) {
+      toast.success(result.message || "Admin account created successfully.")
       setNewAdminUsername("")
       setNewAdminPassword("")
+      return
     }
-    setTimeout(() => setMessage(""), 3000)
+
+    toast.error(result.message || "Failed to create admin account.")
   }
  
   return (
     <div className="animate-in fade-in duration-1000 p-6 md:p-10 space-y-24">
       <GovernanceSettingsSection
-        message={message}
         shipperFee={shipperFee}
         onShipperFeeChange={setShipperFee}
         dollarsPerPoint={dollarsPerPoint}
         onDollarsPerPointChange={setDollarsPerPoint}
         minimumPointsToRedeem={minimumPointsToRedeem}
         onMinimumPointsToRedeemChange={setMinimumPointsToRedeem}
-        pickupAddress={pickupAddress}
-        onPickupAddressChange={setPickupAddress}
         onSaveSettings={handleSaveSettings}
       />
 

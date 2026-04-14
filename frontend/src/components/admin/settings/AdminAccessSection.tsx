@@ -25,27 +25,27 @@ export function AdminAccessSection({
         <h2 className="font-serif text-4xl italic tracking-tight text-foreground">Administrative Access</h2>
       </div>
 
-      <div className="grid grid-cols-1 items-end gap-12 rounded-sm bg-foreground p-12 text-background shadow-editorial md:grid-cols-3">
+      <div className="liquid-glass-strong grid grid-cols-1 items-end gap-12 rounded-sm p-12 text-foreground shadow-editorial md:grid-cols-3">
         <div className="space-y-4">
-          <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-background/40">
+          <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-foreground/50">
             Credential: Principal Username
           </label>
           <input
             type="text"
             value={newAdminUsername}
             onChange={(e) => onNewAdminUsernameChange(e.target.value)}
-            className="w-full border-b border-white/20 bg-transparent py-3 font-serif text-xl italic text-white outline-none transition-all duration-700 focus:border-accent"
+            className="w-full border-b border-border/50 bg-transparent py-3 font-serif text-xl italic text-foreground outline-none transition-all duration-700 focus:border-accent"
           />
         </div>
         <div className="space-y-4">
-          <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-background/40">
+          <label className="small-caps text-[9px] font-bold tracking-[0.2em] text-foreground/50">
             Credential: Cipher (Password)
           </label>
           <input
             type="password"
             value={newAdminPassword}
             onChange={(e) => onNewAdminPasswordChange(e.target.value)}
-            className="w-full border-b border-white/20 bg-transparent py-3 text-white outline-none transition-all duration-700 focus:border-accent"
+            className="w-full border-b border-border/50 bg-transparent py-3 text-foreground outline-none transition-all duration-700 focus:border-accent"
           />
         </div>
         <button
@@ -61,7 +61,7 @@ export function AdminAccessSection({
         {admins.map((admin) => (
           <div
             key={admin.id}
-            className="group flex flex-col items-center gap-6 border border-border bg-white p-8 transition-all duration-1000 hover:border-accent hover:shadow-editorial"
+            className="group liquid-glass flex flex-col items-center gap-6 border border-border p-8 transition-all duration-1000 hover:border-accent hover:shadow-editorial"
           >
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border transition-all duration-1000 group-hover:rotate-12 group-hover:bg-foreground group-hover:text-background">
               <Shield className="h-6 w-6" />

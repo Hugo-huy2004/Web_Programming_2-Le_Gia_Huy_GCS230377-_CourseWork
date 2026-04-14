@@ -1,20 +1,24 @@
 import { AlertCircle, CheckCircle2, Clock, Trash2, ChevronDown } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState'
-import { AdminFilterBar } from '@/components/admin/AdminFilterBar'
 import type { SupportTicket, SupportStatus } from '@/types/store'
 import { formatSupportStatusLabel } from '@/lib/formatUtils'
 import { useAppStore } from '@/stores/useAppStore'
 import { useCustomerStore } from '@/stores/useCustomerStore'
-import { filterSupportTickets } from '@/lib/registryUtils'
+import { filterAndSortSupportTickets } from '@/lib/registryUtils'
 import { toSafeArray } from '@/lib/filterUtils'
 import { SUPPORT_STATUS_OPTIONS, SUPPORT_STATUS_UI_CONFIG } from '@/constants/statusOptions'
+import { confirmWithToast } from '@/lib/toastConfirm'
+import { toast } from 'sonner'
 
-const SupportTab = () => {
+type SupportTabProps = {
+  searchValue: string
+  statusFilter: "all" | SupportStatus
+}
+
+const SupportTab = ({ searchValue, statusFilter }: SupportTabProps) => {
   const { supportTickets, fetchSupportTickets, updateSupportStatus, deleteSupportTicket } = useAppStore()
   const { customers, fetchAllCustomers } = useCustomerStore()
-  const [ticketSearch, setTicketSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<"all" | SupportStatus>("all")
 
   useEffect(() => {
     void fetchSupportTickets()
@@ -35,8 +39,8 @@ const SupportTab = () => {
   )
 
   const filteredTickets = useMemo(
-    () => filterSupportTickets(safeTickets, ticketSearch, statusFilter),
-    [safeTickets, ticketSearch, statusFilter]
+    () => filterAndSortSupportTickets(safeTickets, searchValue, statusFilter),
+    [safeTickets, searchValue, statusFilter]
   )
 
   const iconMap = {
@@ -45,23 +49,35 @@ const SupportTab = () => {
     check: CheckCircle2,
   } as const
 
-  return (
-    <div className="space-y-12 py-6 animate-in fade-in duration-1000">
-      
-        <AdminFilterBar
-        searchLabel="Search Support Ledger"
-        searchPlaceholder="Customer Email or Message..."
-        searchValue={ticketSearch}
-        onSearchChange={setTicketSearch}
-        statusLabel="Status Filter"
-        statusValue={statusFilter}
-        onStatusChange={(value) => setStatusFilter(value as SupportStatus | "all")}
-        statusOptions={[
-          { value: "all", label: "All Tickets" },
-          ...SUPPORT_STATUS_OPTIONS.map((opt) => ({ value: opt, label: formatSupportStatusLabel(opt) })),
-        ]}
-        />
+  const handleDeleteTicket = (ticketId: string) => {
+    confirmWithToast({
+      message: "Delete this concierge inquiry permanently?",
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+      onConfirm: async () => {
+        const result = await deleteSupportTicket(ticketId)
+        if (result.ok) {
+          toast.success("Concierge inquiry deleted.")
+          return
+        }
 
+        toast.error(result.message || "Could not delete concierge inquiry.")
+      },
+    })
+  }
+
+  const handleUpdateSupportStatus = async (ticketId: string, status: SupportStatus) => {
+    const result = await updateSupportStatus(ticketId, status)
+    if (result.ok) {
+      toast.success(`Inquiry status updated to ${formatSupportStatusLabel(status)}.`)
+      return
+    }
+
+    toast.error(result.message || "Could not update concierge inquiry status.")
+  }
+
+  return (
+    <div className="space-y-8 md:space-y-12 py-4 md:py-6 animate-in fade-in duration-1000">
       {/* Ticket Ledger */}
       <div className="space-y-6">
         {filteredTickets.length === 0 ? (
@@ -75,12 +91,12 @@ const SupportTab = () => {
             return (
               <div 
                 key={ticket.id} 
-                className="group bg-white border border-border p-8 md:p-10 rounded-sm hover:border-accent hover:shadow-editorial transition-all duration-700 flex flex-col md:flex-row gap-10 items-start md:items-center justify-between"
+                className="group liquid-glass border border-border p-4 md:p-10 rounded-sm hover:border-accent hover:shadow-editorial transition-all duration-700 flex flex-col md:flex-row gap-5 md:gap-10 items-start md:items-center justify-between"
               >
-                <div className="flex-1 space-y-4 pr-8 border-none md:border-r md:border-border/60">
+                <div className="flex-1 space-y-3 md:space-y-4 md:pr-8 border-none md:border-r md:border-border/60">
                   <div className="flex items-center gap-3">
                     <StatusIcon className={`w-5 h-5 ${config.colorClassName}`} />
-                    <p className="font-serif text-xl italic text-foreground leading-none tracking-tight">
+                    <p className="font-serif text-lg md:text-xl italic text-foreground leading-none tracking-tight break-all">
                         {ticket.customerEmail}
                     </p>
                   </div>
@@ -97,7 +113,7 @@ const SupportTab = () => {
                     </p>
                   </div>
 
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-[13px] md:text-sm text-muted-foreground leading-relaxed">
                     {ticket.message}
                   </p>
                   <p className="small-caps text-accent text-[9px] font-bold tracking-[0.2em]">
@@ -105,12 +121,12 @@ const SupportTab = () => {
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-6 min-w-max">
-                  <div className="relative w-40">
+                <div className="flex w-full md:w-auto items-center gap-3 md:gap-6 md:min-w-max">
+                  <div className="relative flex-1 md:flex-none md:w-40">
                     <select
                       value={ticket.status}
-                      onChange={(e) => updateSupportStatus(ticket.id, e.target.value as SupportStatus)}
-                      className="w-full bg-secondary/20 border-b border-border py-2 text-sm focus:border-accent outline-none transition-all duration-700 uppercase tracking-widest text-[10px] appearance-none cursor-pointer"
+                      onChange={(e) => void handleUpdateSupportStatus(ticket.id, e.target.value as SupportStatus)}
+                      className="w-full bg-secondary/20 border-b border-border py-2.5 text-sm focus:border-accent outline-none transition-all duration-700 uppercase tracking-[0.12em] md:tracking-widest text-[10px] appearance-none cursor-pointer"
                     >
                       {SUPPORT_STATUS_OPTIONS.map(opt => (
                         <option key={opt} value={opt} className="uppercase">{formatSupportStatusLabel(opt)}</option>
@@ -119,8 +135,8 @@ const SupportTab = () => {
                     <ChevronDown className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground/40 pointer-events-none" />
                   </div>
                   <button
-                    onClick={() => deleteSupportTicket(ticket.id)}
-                    className="p-3 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground rounded-sm transition-colors duration-500"
+                    onClick={() => handleDeleteTicket(ticket.id)}
+                    className="p-2.5 md:p-3 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground rounded-sm transition-colors duration-500"
                     title="Delete Ticket"
                   >
                     <Trash2 className="w-5 h-5" />

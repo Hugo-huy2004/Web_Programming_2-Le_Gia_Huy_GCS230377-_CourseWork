@@ -52,10 +52,6 @@ function parseProfile(payload) {
     };
 }
 
-function isProfileComplete(profile) {
-    return Boolean(profile.fullName && profile.birthday && profile.phone && profile.address);
-}
-
 function createCustomerAccessToken(customerId) {
     return jwt.sign(
         { id: String(customerId), role: "customer" },
@@ -135,19 +131,23 @@ export async function updateCustomerProfile(req, res) {
             return sendError(res, 400, "Customer email is required");
         }
 
-        if (!isProfileComplete(profile)) {
-            return sendError(res, 400, "All profile fields are required");
-        }
-
         const customer = await Customer.findOne({ email });
         if (!customer) {
             return sendError(res, 404, "Customer not found");
         }
 
-        customer.fullName = profile.fullName;
-        customer.birthday = profile.birthday;
-        customer.phone = profile.phone;
-        customer.address = profile.address;
+        const hasAnyField = Boolean(
+            profile.fullName || profile.birthday || profile.phone || profile.address
+        );
+        if (!hasAnyField) {
+            return sendError(res, 400, "At least one profile field is required");
+        }
+
+        // Allow partial profile updates while preserving existing values for omitted fields.
+        if (profile.fullName) customer.fullName = profile.fullName;
+        if (profile.birthday) customer.birthday = profile.birthday;
+        if (profile.phone) customer.phone = profile.phone;
+        if (profile.address) customer.address = profile.address;
         await customer.save();
 
         return sendSuccess(res, 200, { message: "Profile updated", customer: toCustomerResponse(customer) });

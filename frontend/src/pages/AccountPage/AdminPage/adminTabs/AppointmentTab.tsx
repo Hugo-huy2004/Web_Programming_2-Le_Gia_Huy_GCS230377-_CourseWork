@@ -12,6 +12,16 @@ const AppointmentTab = () => {
   useEffect(() => {
     fetchAppointments()
   }, [fetchAppointments])
+
+  const handleUpdateAppointmentStatus = async (appointmentId: string, status: (typeof APPOINTMENT_STATUS_OPTIONS)[number]) => {
+    const result = await updateAppointmentStatus(appointmentId, status)
+    if (result.ok) {
+      toast.success(`Appointment status updated to ${status}.`)
+      return
+    }
+
+    toast.error(result.message || "Failed to update appointment status.")
+  }
  
   return (
     <div className="animate-in fade-in duration-700 space-y-10">
@@ -36,7 +46,7 @@ const AppointmentTab = () => {
             appointment={appointment}
             index={idx}
             statusOptions={APPOINTMENT_STATUS_OPTIONS}
-            onUpdateStatus={(appointmentId, status) => updateAppointmentStatus(appointmentId, status)}
+            onUpdateStatus={(appointmentId, status) => void handleUpdateAppointmentStatus(appointmentId, status)}
             onDelete={async (appointmentId) => {
               confirmWithToast({
                 message: "Permanently purge this consultation record?",
