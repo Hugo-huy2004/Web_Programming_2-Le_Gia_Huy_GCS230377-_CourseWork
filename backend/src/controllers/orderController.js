@@ -20,6 +20,25 @@ function isPaypalOrder(payload) {
     return payload?.paymentMethod === "paypal" && toTrimmedText(payload?.paypalOrderId).length > 0;
 }
 
+function extractPaypalAmounts(paypalOrder) {
+    const candidates = [
+        paypalOrder?.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value,
+        paypalOrder?.purchase_units?.[0]?.payments?.authorizations?.[0]?.amount?.value,
+        paypalOrder?.purchase_units?.[0]?.amount?.value,
+    ];
+
+    const amounts = [];
+
+    for (const candidate of candidates) {
+        const parsed = toNumber(candidate, 0);
+        if (parsed > 0) {
+            amounts.push(parsed);
+        }
+    }
+
+    return Array.from(new Set(amounts));
+}
+
 export const createOrder = async (req, res) => {
     try {
         const payload = req.body;
@@ -42,10 +61,19 @@ export const createOrder = async (req, res) => {
             return sendError(res, 400, "PayPal order is not approved.");
         }
 
-        const paypalAmount = toNumber(paypalOrder?.purchase_units?.[0]?.amount?.value, 0);
+        const paypalAmounts = extractPaypalAmounts(paypalOrder);
         const expectedAmount = toNumber(payload?.total, 0);
-        if (!paypalAmount || !expectedAmount || Math.abs(paypalAmount - expectedAmount) > 0.01) {
-            return sendError(res, 400, "PayPal amount does not match order total.");
+        const matchedAmount = paypalAmounts.find((value) => Math.abs(value - expectedAmount) <= 0.05);
+
+        if (!matchedAmount || !expectedAmount) {
+            const paidSummary = paypalAmounts.length > 0
+                ? paypalAmounts.map((value) => value.toFixed(2)).join(" / ")
+                : "N/A";
+            return sendError(
+                res,
+                400,
+                `PayPal amount mismatch. Paid ${paidSummary} but order total is ${expectedAmount.toFixed(2)}.`
+            );
         }
 
         const newRecord = await Order.create({ ...payload });

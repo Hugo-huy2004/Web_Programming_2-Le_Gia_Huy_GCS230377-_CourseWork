@@ -1,6 +1,6 @@
 import { CollectorIdentitySection } from "@/components/order/CollectorIdentitySection"
 import { FinancialFrameworkSection } from "@/components/order/FinancialFrameworkSection"
-import { IdentificationRequiredState, OrderCompletedState } from "@/components/order/ConfirmOrderStates"
+import { OrderCompletedState } from "@/components/order/ConfirmOrderStates"
 import { OrderSummaryAside } from "@/components/order/OrderSummaryAside"
 import { useEffect, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -11,8 +11,10 @@ import { useCustomerStore } from "@/stores/useCustomerStore"
 import { useSettingsStore } from "@/stores/useSettingsStore"
 import { useVoucherStore } from "@/stores/useVoucherStore"
 import { useOrderStore } from "@/stores/useOrderStore"
+import { useAuthStore } from "@/stores/useAuthStore"
 import { calculateOrderSummary } from "@/lib/orderCalculations"
 import { formatUsd } from "@/lib/formatUtils"
+import { rememberPostLoginRedirect, showAuthToastOnce } from "@/lib/authRedirect"
 import type { ShippingMethod } from "@/types/store"
 
 const ConfirmOrderPage = () => {
@@ -20,6 +22,7 @@ const ConfirmOrderPage = () => {
   const { cartItems } = useCartStore()
   const { products, getProductPricing } = useProductStore()
   const { activeCustomer, activeCustomerEmail } = useCustomerStore()
+  const accessToken = useAuthStore((state) => state.accessToken)
   const { settings } = useSettingsStore()
   const { getVoucherByCode } = useVoucherStore()
   const { placeOrder } = useOrderStore()
@@ -34,6 +37,15 @@ const ConfirmOrderPage = () => {
   const [pointsToUse, setPointsToUse] = useState("0")
   const [completedOrderCode, setCompletedOrderCode] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [paypalQuotedTotal, setPaypalQuotedTotal] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!activeCustomerEmail || !accessToken) {
+      rememberPostLoginRedirect()
+      showAuthToastOnce("Please sign in to continue checkout.")
+      navigate("/user", { replace: true })
+    }
+  }, [activeCustomerEmail, accessToken, navigate])
 
   useEffect(() => {
     if (!activeCustomer) return
@@ -83,6 +95,7 @@ const ConfirmOrderPage = () => {
     paymentMethod: "paypal"
     paypalOrderId?: string
     successMessage?: string
+    lockedTotal?: number
   }) => {
     const result = await placeOrder({
       receiverName,
@@ -94,6 +107,7 @@ const ConfirmOrderPage = () => {
       pointsToUse: normalizedPoints,
       paymentMethod: input.paymentMethod,
       paypalOrderId: input.paypalOrderId,
+      lockedTotal: input.lockedTotal,
     })
 
     if (result.ok) {
@@ -119,20 +133,32 @@ const ConfirmOrderPage = () => {
     toast.success(`Voucher ${voucher.code} validated.`)
   }
 
-  const createPayPalOrder = (_data: unknown, actions: any) =>
-    actions.order.create({
+  const createPayPalOrder = (_data: unknown, actions: any) => {
+    const quoted = Number(total.toFixed(2))
+    setPaypalQuotedTotal(quoted)
+
+    return actions.order.create({
       intent: "CAPTURE",
-      purchase_units: [{ amount: { currency_code: "USD", value: total.toFixed(2) } }],
+      purchase_units: [{ amount: { currency_code: "USD", value: quoted.toFixed(2) } }],
     })
+  }
 
   const handlePayPalApprove = async (_data: unknown, actions: any) => {
     setIsSubmitting(true)
     try {
       const capture = await actions.order?.capture()
       if (capture?.id) {
+        const capturedAmountRaw = capture?.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value
+          ?? capture?.purchase_units?.[0]?.amount?.value
+        const capturedAmount = Number(capturedAmountRaw)
+
         await finalizeOrder({
           paymentMethod: "paypal",
           paypalOrderId: capture.id,
+          lockedTotal:
+            Number.isFinite(capturedAmount) && capturedAmount > 0
+              ? capturedAmount
+              : paypalQuotedTotal ?? Number(total.toFixed(2)),
           successMessage: "Financial orchestraton successful. Signature captured.",
         })
       }
@@ -141,8 +167,8 @@ const ConfirmOrderPage = () => {
     }
   }
 
-  if (!activeCustomerEmail) {
-    return <IdentificationRequiredState />
+  if (!activeCustomerEmail || !accessToken) {
+    return null
   }
 
   if (completedOrderCode) {
@@ -150,16 +176,16 @@ const ConfirmOrderPage = () => {
   }
 
   return (
-    <div className="relative space-y-12 md:space-y-20 pb-24 mt-10 mx-auto w-full max-w-[1400px] px-6 md:px-12 pt-6 md:pt-10">
-      <header className="border-b border-border pb-10 space-y-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-accent">Curatorial Verification</p>
-        <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-foreground tracking-tighter leading-none">
+    <div className="relative mx-auto w-full max-w-[1400px] space-y-6 px-3 pb-24 pt-4 md:mt-10 md:space-y-20 md:px-12 md:pt-10">
+      <header className="space-y-2 border-b border-border pb-5 md:space-y-4 md:pb-10">
+        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-accent md:text-[10px] md:font-bold md:tracking-widest">Curatorial Verification</p>
+        <h1 className="text-3xl font-semibold leading-none tracking-tight text-foreground md:font-serif md:text-7xl md:tracking-tighter lg:text-8xl">
           Signature & <br /><span className="italic text-accent opacity-90">Confirmation</span>
         </h1>
       </header>
 
-      <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-20">
-        <div className="space-y-20 pt-2">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-20">
+        <div className="space-y-8 pt-1 md:space-y-20 md:pt-2">
           <CollectorIdentitySection
             receiverName={receiverName}
             onReceiverNameChange={setReceiverName}
@@ -183,7 +209,7 @@ const ConfirmOrderPage = () => {
             pointsToUse={pointsToUse}
             onPointsToUseChange={setPointsToUse}
             canUsePoints={canUsePoints}
-            minimumPointsToRedeem={settings.minimumPointsToRedeem}
+            dollarsPerPoint={settings.dollarsPerPoint}
             formatUsd={formatUsd}
           />
         </div>

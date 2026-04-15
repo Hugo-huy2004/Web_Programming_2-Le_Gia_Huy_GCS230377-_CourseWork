@@ -88,13 +88,22 @@ const Collections = () => {
             </p>
 
             {priceHighlights.length > 0 && (
-              <div className="grid grid-cols-1 gap-4 border-y border-accent/20 py-4 min-[430px]:grid-cols-2 min-[430px]:gap-8 lg:flex lg:items-center lg:border-l lg:border-y-0 lg:py-0 lg:pl-8">
-                {priceHighlights.map((item) => (
-                  <div key={item.label} className="space-y-1">
-                    <p className="small-caps mb-1">{item.label}</p>
-                    <p className="font-serif text-[2rem] leading-none text-foreground md:text-3xl">{formatUsd(item.value)}</p>
-                  </div>
-                ))}
+              <div className="rounded-2xl border border-border/60 bg-white/75 p-2.5 shadow-[0_10px_24px_rgba(0,0,0,0.06)] backdrop-blur min-[430px]:p-3 lg:grid lg:grid-cols-1 lg:rounded-none lg:border-l lg:border-y-0 lg:border-r-0 lg:border-t-0 lg:bg-transparent lg:p-0 lg:pl-8 lg:shadow-none lg:backdrop-blur-0">
+                <div className="grid grid-cols-2 gap-2 min-[430px]:gap-3 lg:flex lg:items-center lg:gap-8">
+                  {priceHighlights.map((item) => (
+                    <div
+                      key={item.label}
+                      className="rounded-xl border border-border/50 bg-background px-2.5 py-2 text-center min-[430px]:px-3 lg:rounded-none lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:text-left"
+                    >
+                      <p className="mb-1 text-[8px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/70 lg:small-caps lg:text-[10px] lg:tracking-normal">
+                        {item.label}
+                      </p>
+                      <p className="text-base font-semibold leading-none text-foreground min-[430px]:text-lg md:font-serif md:text-3xl">
+                        {formatUsd(item.value)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

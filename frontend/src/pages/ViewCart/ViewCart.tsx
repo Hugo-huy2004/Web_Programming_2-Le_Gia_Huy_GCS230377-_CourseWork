@@ -8,7 +8,9 @@ import { useCartStore } from "@/stores/useCartStore"
 import { useProductStore } from "@/stores/useProductStore"
 import { useCustomerStore } from "@/stores/useCustomerStore"
 import { useSettingsStore } from "@/stores/useSettingsStore"
+import { useAuthStore } from "@/stores/useAuthStore"
 import { formatUsd } from "@/lib/formatUtils"
+import { rememberPostLoginRedirect, showAuthToastOnce } from "@/lib/authRedirect"
 import type { Product } from "@/types/product"
 
 const ViewCart = () => {
@@ -16,15 +18,19 @@ const ViewCart = () => {
   const { cartItems, updateCartQuantity, removeFromCart, clearCart, getCartTotal } = useCartStore()
   const { products, getProductPricing } = useProductStore()
   const { activeCustomerEmail } = useCustomerStore()
+  const accessToken = useAuthStore((state) => state.accessToken)
   const { currentAdmin } = useSettingsStore()
 
   const cartTotalValue = getCartTotal()
 
   useEffect(() => {
-    if (!activeCustomerEmail && !currentAdmin) {
-      navigate("/user")
+    const canAccessAsCustomer = Boolean(activeCustomerEmail && accessToken)
+    if (!canAccessAsCustomer && !currentAdmin) {
+      rememberPostLoginRedirect()
+      showAuthToastOnce("Please sign in to continue.")
+      navigate("/user", { replace: true })
     }
-  }, [activeCustomerEmail, currentAdmin, navigate])
+  }, [activeCustomerEmail, accessToken, currentAdmin, navigate])
 
   const detailedItems = useMemo(() => {
     return cartItems
@@ -61,28 +67,33 @@ const ViewCart = () => {
   }
 
   return (
-    <div className="relative space-y-4 pb-6 mx-auto w-full max-w-[1400px] px-6 md:px-12">
+    <div className="relative mx-auto w-full max-w-[1400px] space-y-2.5 px-2.5 pb-44 md:space-y-4 md:px-12 md:pb-6">
       {/* Botanical Background Elements */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-l from-accent/5 to-transparent rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
+      <div className="pointer-events-none absolute -mr-20 -mt-20 hidden h-[400px] w-[400px] rounded-full bg-gradient-to-l from-accent/5 to-transparent blur-3xl md:block" />
       
-      <div className="relative z-10 space-y-6 pt-10 md:pt-16">
-        <header className="border-b border-border pb-6 space-y-2">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted-foreground/60">Acquisition Summary</p>
-              <h1 className="font-serif text-4xl md:text-6xl text-foreground tracking-tighter leading-none">Your Curation</h1>
+      <div className="relative z-10 space-y-3 pt-2 md:space-y-6 md:pt-16">
+        <header className="space-y-2 border-b border-border/70 pb-3 md:border-border md:pb-6">
+          <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end md:gap-6">
+            <div className="space-y-1.5 md:space-y-4">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/60 md:text-[10px] md:tracking-[0.4em]">Acquisition Summary</p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-semibold leading-none tracking-tight text-foreground md:font-serif md:text-6xl md:tracking-tighter">Your Cart</h1>
+                <span className="rounded-full border border-border/70 px-2 py-0.5 text-[9px] font-semibold text-muted-foreground md:hidden">
+                  {detailedItems.length} items
+                </span>
+              </div>
             </div>
             {activeCustomerEmail && (
                <div className="flex flex-col md:items-end">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-accent">Verified Collector</p>
-                  <p className="text-lg font-serif italic text-foreground">{activeCustomerEmail}</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-accent md:tracking-[0.2em]">Verified Collector</p>
+                  <p className="max-w-full truncate text-xs text-foreground md:max-w-none md:text-lg md:font-serif md:italic">{activeCustomerEmail}</p>
                </div>
             )}
           </div>
         </header>
 
-        <div className="grid lg:grid-cols-[1fr_400px] gap-10 items-start pt-6">
-          <div className="space-y-6">
+        <div className="grid items-start gap-3 pt-1 lg:grid-cols-[1fr_400px] lg:gap-10 lg:pt-6">
+          <div className="space-y-3 md:space-y-6">
             <AnimatePresence mode="popLayout">
               {detailedItems.map((item) => (
                 <CartItemCard
@@ -95,12 +106,12 @@ const ViewCart = () => {
               ))}
             </AnimatePresence>
 
-            <div className="pt-8 flex justify-end">
+            <div className="flex justify-end pt-1 md:pt-8">
                <button 
                  onClick={() => clearCart()}
-                 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/50 hover:text-accent transition-colors border-b border-transparent hover:border-accent pb-1"
+                 className="rounded-sm border border-border/60 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-muted-foreground/80 transition-colors hover:border-accent hover:text-accent md:border-0 md:px-0 md:py-0 md:border-b md:border-transparent md:pb-1 md:text-[10px] md:tracking-[0.3em]"
                >
-                 Clear Personal Curation
+                 Clear cart
                </button>
             </div>
           </div>
@@ -108,6 +119,7 @@ const ViewCart = () => {
           <CartSummaryCard
             activeCustomerEmail={activeCustomerEmail}
             cartTotalValue={cartTotalValue}
+            itemCount={detailedItems.length}
             formatUsd={formatUsd}
             onCheckout={() => navigate(activeCustomerEmail ? "/confirm" : "/user")}
           />

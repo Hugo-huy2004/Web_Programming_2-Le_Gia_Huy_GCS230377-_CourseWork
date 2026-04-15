@@ -5,12 +5,14 @@ import { useAuthStore } from "@/stores/useAuthStore"
 import { hasCompleteCustomerProfile, useCustomerStore } from "@/stores/useCustomerStore"
 import { useOrderStore } from "@/stores/useOrderStore"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type { CredentialResponse } from "@react-oauth/google"
 import CustomerProfileRequiredForm from "@/components/auth/CustomerProfileRequiredForm"
+import { consumePostLoginRedirect } from "@/lib/authRedirect"
 
 const adminLoginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -20,6 +22,7 @@ const adminLoginSchema = z.object({
 type AdminLoginFormData = z.infer<typeof adminLoginSchema>
 
 export default function AccountPage() {
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -29,13 +32,20 @@ export default function AccountPage() {
   })
 
   const { adminLogin, loading, admin, logout } = useAuthStore()
+  const accessToken = useAuthStore((state) => state.accessToken)
   const { activeCustomerEmail, activeCustomer, loginWithGoogle, setActiveCustomerEmail } = useCustomerStore()
   const { fetchOrders } = useOrderStore()
   const [selectedTab, setSelectedTab] = useState<"customer" | "admin">(
     "customer"
   )
   const isGuest = !admin && !activeCustomerEmail
-  const needsProfileCompletion = Boolean(activeCustomerEmail) && !hasCompleteCustomerProfile(activeCustomer)
+  const needsProfileCompletion = Boolean(accessToken && activeCustomerEmail && activeCustomer) && !hasCompleteCustomerProfile(activeCustomer)
+
+  useEffect(() => {
+    if (activeCustomerEmail && !accessToken) {
+      setActiveCustomerEmail(null)
+    }
+  }, [activeCustomerEmail, accessToken, setActiveCustomerEmail])
 
   useEffect(() => {
     if (activeCustomerEmail) {
@@ -61,6 +71,11 @@ export default function AccountPage() {
     if (success) {
       setActiveCustomerEmail(null)
       toast.success("Admin login successful!")
+
+      const target = consumePostLoginRedirect()
+      if (target) {
+        navigate(target, { replace: true })
+      }
       return
     }
 
@@ -75,10 +90,15 @@ export default function AccountPage() {
     const result = await loginWithGoogle(response)
     if (result.ok) {
       const latestCustomer = useCustomerStore.getState().activeCustomer
+      const target = consumePostLoginRedirect()
       if (!hasCompleteCustomerProfile(latestCustomer)) {
         toast.info("Please complete your profile to continue to cart and checkout.")
       }
       toast.success("Customer login successful!")
+
+      if (target) {
+        navigate(target, { replace: true })
+      }
       return
     }
 

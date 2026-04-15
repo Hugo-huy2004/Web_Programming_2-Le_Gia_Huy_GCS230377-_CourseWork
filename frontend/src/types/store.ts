@@ -124,6 +124,7 @@ export type AddProductInput = {
   description: string
   isNew: boolean
   discountPercent: number
+  imageFile?: File | null
 }
 
 export type UpdateProductInput = Partial<AddProductInput>
@@ -176,6 +177,7 @@ export type PlaceOrderInput = {
   pointsToUse?: number
   paymentMethod: PaymentMethod
   paypalOrderId?: string
+  lockedTotal?: number
 }
 
 export type GoldApiRecord = {

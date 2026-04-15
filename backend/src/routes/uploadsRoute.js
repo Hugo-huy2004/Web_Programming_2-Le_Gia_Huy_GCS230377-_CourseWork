@@ -18,7 +18,7 @@ const upload = multer({
   },
 })
 
-router.post("/drive-image", upload.single(IMAGE_FIELD), async (req, res) => {
+router.post("/cloudinary-image", upload.single(IMAGE_FIELD), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
       ok: false,

@@ -31,20 +31,22 @@ const CustomerDashboardPage = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-14 min-h-[600px] animate-in fade-in duration-700">
-      <aside className="w-full lg:w-64 shrink-0">
-        <nav className="flex lg:flex-col overflow-x-auto lg:overflow-visible no-scrollbar p-1 bg-secondary/25 rounded-sm border border-border/30 lg:border-none lg:bg-transparent lg:p-0 gap-1 lg:gap-2">
+    <div className="animate-in fade-in duration-700 flex flex-col gap-4 md:gap-6 lg:flex-row lg:gap-14 lg:min-h-[600px]">
+      <aside className="w-full shrink-0 lg:w-64">
+        <nav className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-sm border border-border/40 bg-background/90 p-1.5 backdrop-blur-sm md:p-2 lg:flex-col lg:gap-2 lg:overflow-visible lg:border-none lg:bg-transparent lg:p-0 lg:backdrop-blur-0">
           {CUSTOMER_TAB_ITEMS.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-1.5 px-2.5 py-2 rounded-sm text-[7px] font-bold uppercase tracking-[0.1em] transition-all duration-500 whitespace-nowrap lg:w-full border md:px-3 md:py-2 md:text-[8px] md:tracking-[0.12em] ${
+              className={`flex items-center gap-2 whitespace-nowrap rounded-sm border px-3 py-2 text-[10px] font-semibold transition-all duration-300 md:px-3 md:py-2 md:text-[8px] md:font-bold md:uppercase md:tracking-[0.12em] lg:w-full ${
                 activeTab === item.id
                   ? "bg-foreground text-background border-foreground shadow-sm"
-                  : "text-muted-foreground/60 hover:text-accent border-transparent hover:border-border/50 hover:bg-background/50"
+                  : "border-transparent text-muted-foreground/80 hover:border-border/50 hover:bg-background/50 hover:text-foreground"
               }`}
             >
-              <span className="font-serif italic text-[9px] tracking-normal normal-case opacity-50">{item.icon}</span>
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-current/20 text-[9px] font-semibold opacity-80 md:h-auto md:w-auto md:border-0 md:text-[9px] md:font-serif md:italic md:tracking-normal md:normal-case md:opacity-50">
+                {item.icon}
+              </span>
               {item.label}
             </button>
           ))}
@@ -56,6 +58,13 @@ const CustomerDashboardPage = () => {
             className="hidden lg:flex items-center gap-4 px-6 py-4 rounded-sm text-[10px] font-bold uppercase tracking-[0.25em] text-destructive/40 hover:text-destructive transition-all duration-500 hover:bg-destructive/5"
           >
             <span className="font-serif italic text-xs tracking-normal normal-case opacity-40">LO</span>
+            Logout
+          </button>
+
+          <button
+            onClick={customerLogout}
+            className="ml-auto rounded-sm border border-destructive/30 px-3 py-2 text-[10px] font-semibold text-destructive md:hidden"
+          >
             Logout
           </button>
         </nav>
@@ -70,11 +79,11 @@ const CustomerDashboardPage = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <header className="mb-8 lg:mb-14">
-              <h1 className="font-serif text-2xl md:text-5xl text-foreground tracking-tighter italic">
+            <header className="mb-4 md:mb-8 lg:mb-14">
+              <h1 className="text-xl font-semibold text-foreground tracking-tight md:font-serif md:text-5xl md:tracking-tighter md:italic">
                 {pageTitle}
               </h1>
-              <div className="h-px w-24 bg-accent/30 mt-4" />
+              <div className="mt-2 h-px w-16 bg-accent/30 md:mt-4 md:w-24" />
             </header>
 
             {renderActiveSection()}

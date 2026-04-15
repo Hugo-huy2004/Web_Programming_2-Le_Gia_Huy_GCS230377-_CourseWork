@@ -13,10 +13,6 @@ const parseNumber = (value: string): number => {
   return Number.isFinite(parsed) ? parsed : 0
 }
  
-const parseNonNegativeInteger = (value: string): number => {
-  return Math.max(0, Math.floor(parseNumber(value)))
-}
- 
 const SettingTab = () => {
   const {
     admins,
@@ -43,7 +39,6 @@ const SettingTab = () => {
   const [newAdminPassword, setNewAdminPassword] = useState("")
   const [shipperFee, setShipperFee] = useState(String(settings.shipperFee))
   const [dollarsPerPoint, setDollarsPerPoint] = useState(String(settings.dollarsPerPoint))
-  const [minimumPointsToRedeem, setMinimumPointsToRedeem] = useState(String(settings.minimumPointsToRedeem))
  
   useEffect(() => {
     fetchSettings()
@@ -55,14 +50,12 @@ const SettingTab = () => {
     if (!settings) return
     setShipperFee(String(settings.shipperFee ?? 25))
     setDollarsPerPoint(String(settings.dollarsPerPoint ?? 100))
-    setMinimumPointsToRedeem(String(settings.minimumPointsToRedeem ?? 10))
   }, [settings])
  
   const handleSaveSettings = async () => {
     const result = await updateSettings({
       shipperFee: parseNumber(shipperFee),
       dollarsPerPoint: parseNumber(dollarsPerPoint),
-      minimumPointsToRedeem: parseNonNegativeInteger(minimumPointsToRedeem),
     })
     if (result.ok) {
       toast.success(result.message || "Governance updated successfully.")
@@ -97,14 +90,12 @@ const SettingTab = () => {
   }
  
   return (
-    <div className="animate-in fade-in duration-1000 p-6 md:p-10 space-y-24">
+    <div className="animate-in fade-in space-y-10 p-3 duration-700 md:space-y-24 md:p-10 md:duration-1000">
       <GovernanceSettingsSection
         shipperFee={shipperFee}
         onShipperFeeChange={setShipperFee}
         dollarsPerPoint={dollarsPerPoint}
         onDollarsPerPointChange={setDollarsPerPoint}
-        minimumPointsToRedeem={minimumPointsToRedeem}
-        onMinimumPointsToRedeemChange={setMinimumPointsToRedeem}
         onSaveSettings={handleSaveSettings}
       />
 

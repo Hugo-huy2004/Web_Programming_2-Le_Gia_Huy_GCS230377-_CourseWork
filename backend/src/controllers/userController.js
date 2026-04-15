@@ -4,7 +4,6 @@ export const authMe = async (req, res) => {
         if (!user) {
             return res.status(404).json({ ok: false, message: "User not found" });
         }
-        // Exclude password from the returned object if it exists
         const userToReturn = { ...user._doc };
         if (userToReturn.passwordHash) {
             delete userToReturn.passwordHash;

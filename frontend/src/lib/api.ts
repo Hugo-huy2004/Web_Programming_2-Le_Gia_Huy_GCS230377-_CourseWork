@@ -48,10 +48,18 @@ async function request<T>(path: string, options?: RequestInit & { admin?: boolea
       finalHeaders.set("Authorization", `Bearer ${token}`)
     }
 
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      ...requestInit,
-      headers: finalHeaders,
-    })
+    let response: Response
+    try {
+      response = await fetch(`${API_BASE_URL}${path}`, {
+        ...requestInit,
+        headers: finalHeaders,
+      })
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error)
+      throw new Error(
+        `Cannot connect to API server (${API_BASE_URL}${path}). Check backend/proxy/CORS configuration. Original error: ${detail}`
+      )
+    }
 
     const contentType = response.headers.get("content-type") ?? ""
     let data: (T & { message?: string }) | null = null
@@ -66,7 +74,7 @@ async function request<T>(path: string, options?: RequestInit & { admin?: boolea
     if (!response.ok) {
       const message = data?.message || rawText || `Request failed: ${response.status}`
       const lowered = message.toLowerCase()
-      if (response.status === 401 && (lowered.includes("expired") || lowered.includes("not valid") || lowered.includes("missing access token"))) {
+      if (response.status === 401 && (token || lowered.includes("expired") || lowered.includes("not valid") || lowered.includes("missing access token"))) {
         emitSessionExpired(message)
       }
       throw new Error(message)
@@ -351,7 +359,7 @@ export async function syncProductsRequest(
   })
 }
 
-export async function uploadDriveImageRequest(file: File) {
+export async function uploadCloudinaryImageRequest(file: File) {
   const formData = new FormData()
   formData.append("image", file)
 
@@ -364,7 +372,7 @@ export async function uploadDriveImageRequest(file: File) {
       webViewLink: string
       publicUrl: string
     }
-  }>("/uploads/drive-image", {
+  }>("/uploads/cloudinary-image", {
     method: "POST",
     admin: true,
     body: formData,

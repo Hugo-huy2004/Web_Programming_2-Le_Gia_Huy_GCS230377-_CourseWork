@@ -134,7 +134,7 @@ export const editProduct = async (req, res) => {
 export const addProduct = async (req, res) => {
     try {
         const { name, category, metalType, description } = req.body;
-        let imageUrl = trimString(req.body?.imageUrl) || "/images/placeholder-gold.jpg";
+        let imageUrl = trimString(req.body?.imageUrl);
 
         if (req.file) {
             const uploaded = await uploadProductImage(req.file);

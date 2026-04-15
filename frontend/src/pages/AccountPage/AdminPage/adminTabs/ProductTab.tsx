@@ -31,12 +31,12 @@ export default function ProductTab() {
     updateProduct,
     deleteProduct,
     getProductPricing,
-    uploadProductImage,
   } = useProductStore()
  
   const [search, setSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
  
   const [form, setForm] = useState<ProductFormState>(initialProductForm)
  
@@ -59,6 +59,7 @@ export default function ProductTab() {
   const handleAddNew = () => {
     setEditingId(null)
     setForm(initialProductForm)
+    setSelectedImageFile(null)
     setIsModalOpen(true)
   }
  
@@ -70,7 +71,14 @@ export default function ProductTab() {
       discountPercent: String(product.discountPercent || 0), stock: String(product.stock),
       imageUrl: product.imageUrl, description: product.description || "", isNew: !!product.isNew
     })
+    setSelectedImageFile(null)
     setIsModalOpen(true)
+  }
+
+  const handleSelectImage = (file: File) => {
+    const previewUrl = URL.createObjectURL(file)
+    setSelectedImageFile(file)
+    setForm((prev) => ({ ...prev, imageUrl: previewUrl }))
   }
 
   const handleDeleteProduct = async (productId: string) => {
@@ -98,28 +106,20 @@ export default function ProductTab() {
       weightChi: toNumber(form.weightChi),
       makingFee: toNumber(form.makingFee),
       discountPercent: toNumber(form.discountPercent),
-      stock: Math.floor(toNumber(form.stock))
+      stock: Math.floor(toNumber(form.stock)),
+      imageFile: selectedImageFile,
     }
  
     try {
       if (editingId) await updateProduct(editingId, payload)
       else await createProduct(payload)
       toast.success("Registry synchronized successfully.")
+      setSelectedImageFile(null)
       setIsModalOpen(false)
     } catch (err: unknown) { 
       const error = err as Error
       toast.error(error.message || "Synchronization failed.")
     }
-  }
-
-  const handleUploadImage = async (file: File): Promise<string | null> => {
-    const result = await uploadProductImage(file)
-    if (!result.ok || !result.publicUrl) {
-      toast.error(result.message || "Image upload failed.")
-      return null
-    }
-
-    return result.publicUrl
   }
  
   return (
@@ -151,8 +151,11 @@ export default function ProductTab() {
         form={form}
         setForm={setForm}
         categories={activeCategories}
-        onUploadImage={handleUploadImage}
-        onClose={() => setIsModalOpen(false)}
+        onSelectImage={handleSelectImage}
+        onClose={() => {
+          setSelectedImageFile(null)
+          setIsModalOpen(false)
+        }}
         onSave={handleSave}
       />
     </div>

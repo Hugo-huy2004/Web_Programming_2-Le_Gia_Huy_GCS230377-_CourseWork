@@ -70,37 +70,38 @@ export async function upsertGoogleCustomer(req, res) {
             return sendError(res, 400, "Customer email is required");
         }
 
-        const existing = await Customer.findOne({ email });
-        if (existing) {
-            const accessToken = createCustomerAccessToken(existing._id);
-            return sendSuccess(res, 200, {
-                message: "Customer found",
-                customer: toCustomerResponse(existing),
-                accessToken,
-            });
-        }
+        const customer = await Customer.findOneAndUpdate(
+            { email },
+            {
+                $set: {
+                    provider: "google",
+                    providerId: verified.providerId || undefined,
+                },
+                $setOnInsert: {
+                    email,
+                    fullName: name || "New Customer",
+                    birthday: "",
+                    phone: "",
+                    address: "",
+                    loyaltyPoints: 0,
+                    totalSpent: 0,
+                    totalOrders: 0,
+                },
+            },
+            { new: true, upsert: true }
+        );
 
-        const newCustomer = await Customer.create({
-            email,
-            fullName: name || "New Customer",
-            birthday: "",
-            phone: "",
-            address: "",
-            provider: "google",
-            providerId: verified.providerId || undefined,
-            loyaltyPoints: 0,
-            totalSpent: 0,
-            totalOrders: 0,
-        });
-
-        const accessToken = createCustomerAccessToken(newCustomer._id);
-        return sendSuccess(res, 201, {
-            message: "Customer created",
-            customer: toCustomerResponse(newCustomer),
+        const accessToken = createCustomerAccessToken(customer._id);
+        return sendSuccess(res, 200, {
+            message: "Google login successful",
+            customer: toCustomerResponse(customer),
             accessToken,
         });
     } catch (error) {
-        return sendError(res, 500, error.message);
+        const message = String(error?.message ?? "Google login failed");
+        const lower = message.toLowerCase();
+        const isAuthError = lower.includes("token") || lower.includes("google") || lower.includes("audience") || lower.includes("verified");
+        return sendError(res, isAuthError ? 401 : 500, message);
     }
 }
 

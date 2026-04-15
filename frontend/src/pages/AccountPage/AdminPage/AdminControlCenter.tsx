@@ -154,26 +154,26 @@ const AdminControlCenter = ({ currentAdmin, handleLogout }: AdminControlCenterPr
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-      className="space-y-8 md:space-y-12"
+      className="space-y-4 md:space-y-12"
     >
-      <div className="flex flex-col justify-between gap-3 rounded-sm border border-border bg-background p-4 md:flex-row md:items-center">
+      <div className="sticky top-2 z-20 flex flex-col justify-between gap-2 rounded-sm border border-border/80 bg-background/95 p-3 backdrop-blur md:static md:flex-row md:items-center md:gap-3 md:border-border md:bg-background md:p-4 md:backdrop-blur-0">
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">Admin panel</p>
-          <h2 className="text-lg font-semibold text-foreground sm:text-xl md:text-2xl">
+          <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground md:text-xs md:normal-case md:tracking-normal">Admin panel</p>
+          <h2 className="text-base font-semibold text-foreground sm:text-xl md:text-2xl">
             {currentAdmin?.username || "System Guest"}
           </h2>
         </div>
         <button
           onClick={handleLogout}
-          className="group flex w-full items-center justify-center gap-2 rounded-sm border border-border px-4 py-2.5 text-xs font-medium text-foreground transition-colors hover:border-destructive hover:text-destructive md:w-auto"
+          className="group flex w-full items-center justify-center gap-2 rounded-sm border border-border px-3 py-2 text-[11px] font-semibold text-foreground transition-colors hover:border-destructive hover:text-destructive md:w-auto md:px-4 md:py-2.5 md:text-xs md:font-medium"
         >
           <LogOut className="h-4 w-4" />
           Logout
         </button>
       </div>
 
-      <div className="space-y-6 md:space-y-10">
-        <div className="scrollbar-hide flex items-center gap-2 overflow-x-auto rounded-sm border border-border bg-background p-2">
+      <div className="space-y-3 md:space-y-10">
+        <div className="scrollbar-hide flex items-center gap-1.5 overflow-x-auto rounded-sm border border-border bg-background p-1.5 md:gap-2 md:p-2">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             const Icon = tab.icon
@@ -181,16 +181,16 @@ const AdminControlCenter = ({ currentAdmin, handleLogout }: AdminControlCenterPr
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex items-center gap-2 whitespace-nowrap rounded-sm px-3 py-2 text-sm transition-colors ${
+                className={`relative flex items-center gap-1.5 whitespace-nowrap rounded-sm px-2.5 py-2 text-[11px] transition-colors md:gap-2 md:px-3 md:text-sm ${
                   isActive
                     ? "bg-foreground text-background"
                     : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
                 }`}
               >
-                <Icon className="h-4 w-4" />
-                <span className="text-xs font-medium">{tab.label}</span>
+                <Icon className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                <span className="text-[10px] font-semibold md:text-xs md:font-medium">{tab.label}</span>
                 {tab.count !== undefined && tab.count > 0 && (
-                  <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-white">
+                  <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent px-1 text-[9px] font-semibold text-white md:text-[10px]">
                     {tab.count}
                   </span>
                 )}
@@ -212,7 +212,7 @@ const AdminControlCenter = ({ currentAdmin, handleLogout }: AdminControlCenterPr
           />
         )}
 
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 md:duration-1000">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

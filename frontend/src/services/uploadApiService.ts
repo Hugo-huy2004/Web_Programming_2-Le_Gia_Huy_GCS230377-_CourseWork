@@ -1,8 +1,8 @@
-import { uploadDriveImageRequest } from "../lib/api"
+import { uploadCloudinaryImageRequest } from "../lib/api"
 
 export const uploadApiService = {
   uploadProductImage: async (file: File): Promise<{ ok: boolean; publicUrl: string; message: string }> => {
-    const result = await uploadDriveImageRequest(file)
+    const result = await uploadCloudinaryImageRequest(file)
     return {
       ok: result.ok,
       publicUrl: result.file.publicUrl,

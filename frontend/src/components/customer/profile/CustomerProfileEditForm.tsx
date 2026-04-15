@@ -24,68 +24,68 @@ export function CustomerProfileEditForm({
     <motion.div
       initial={{ opacity: 0, scale: 0.99 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-2xl border border-border bg-white p-5 md:p-16 rounded-sm shadow-editorial mx-auto"
+      className="mx-auto w-full max-w-2xl rounded-sm border border-border bg-white p-3 shadow-editorial md:p-16"
     >
-      <div className="mb-8 md:mb-12 space-y-4 text-center">
-        <p className="small-caps text-accent">Registry Refinement</p>
-        <h3 className="font-serif text-2xl md:text-4xl text-foreground tracking-tighter italic">Update Profile</h3>
-        <div className="h-px w-16 bg-border mx-auto mt-4" />
+      <div className="mb-4 space-y-2 text-center md:mb-12 md:space-y-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-accent md:small-caps">Registry Refinement</p>
+        <h3 className="text-xl font-semibold text-foreground md:font-serif md:text-4xl md:italic md:tracking-tighter">Update Profile</h3>
+        <div className="mx-auto mt-2 h-px w-12 bg-border md:mt-4 md:w-16" />
       </div>
 
-      <div className="grid gap-6 md:gap-10 md:grid-cols-2">
-        <div className="grid gap-3">
-          <label className="small-caps text-[10px]">Legal Name</label>
+      <div className="grid gap-3 md:grid-cols-2 md:gap-10">
+        <div className="grid gap-1.5 md:gap-3">
+          <label className="text-[10px] font-medium text-muted-foreground md:small-caps">Legal Name</label>
           <input
             id="edit-full-name"
-            className="flex h-11 md:h-12 w-full px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-border bg-transparent focus-visible:border-accent rounded-sm text-base md:text-lg font-serif border"
+            className="flex h-10 w-full rounded-sm border border-border px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:h-12 md:bg-transparent md:text-lg md:font-serif"
             value={profileForm.fullName}
             onChange={(event) => updateField("fullName", event.target.value)}
           />
         </div>
 
-        <div className="grid gap-3">
-          <label className="small-caps text-[10px]">Birth Registry</label>
+        <div className="grid gap-1.5 md:gap-3">
+          <label className="text-[10px] font-medium text-muted-foreground md:small-caps">Birth Registry</label>
           <input
             id="edit-birthday"
             type="date"
-            className="flex h-12 w-full px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-border bg-transparent focus-visible:border-accent rounded-sm font-serif text-sm border"
+            className="flex h-10 w-full rounded-sm border border-border px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:font-medium placeholder:text-muted-foreground focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:h-12 md:bg-transparent md:font-serif"
             value={profileForm.birthday}
             onChange={(event) => updateField("birthday", event.target.value)}
           />
         </div>
 
-        <div className="grid gap-3">
-          <label className="small-caps text-[10px]">Direct Connection</label>
+        <div className="grid gap-1.5 md:gap-3">
+          <label className="text-[10px] font-medium text-muted-foreground md:small-caps">Direct Connection</label>
           <input
             id="edit-phone"
-            className="flex h-11 md:h-12 w-full px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 border-border bg-transparent focus-visible:border-accent rounded-sm text-base md:text-lg font-serif border"
+            className="flex h-10 w-full rounded-sm border border-border px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:h-12 md:bg-transparent md:text-lg md:font-serif"
             value={profileForm.phone}
             onChange={(event) => updateField("phone", event.target.value)}
           />
         </div>
 
-        <div className="grid gap-3 md:col-span-2">
-          <label className="small-caps text-[10px]">Primary Residence</label>
+        <div className="grid gap-1.5 md:col-span-2 md:gap-3">
+          <label className="text-[10px] font-medium text-muted-foreground md:small-caps">Primary Residence</label>
           <Textarea
             id="edit-address"
             rows={2}
-            className="min-h-[100px] border-border bg-transparent focus-visible:border-accent rounded-sm p-4 text-lg font-serif resize-none"
+            className="min-h-[90px] resize-none rounded-sm border border-border bg-transparent p-3 text-sm focus-visible:border-accent md:min-h-[100px] md:p-4 md:text-lg md:font-serif"
             value={profileForm.address}
             onChange={(event) => updateField("address", event.target.value)}
           />
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 mt-8 md:mt-12 pt-6 md:pt-10 border-t border-border">
+      <div className="mt-5 flex flex-col items-center justify-center gap-2 border-t border-border pt-4 sm:flex-row sm:gap-8 md:mt-12 md:pt-10">
         <button
           onClick={onSave}
-          className="w-full sm:w-auto px-8 sm:px-12 py-3 sm:py-4 bg-foreground text-background text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.24em] rounded-sm hover:bg-accent hover:text-white transition-all duration-700 shadow-sm"
+          className="w-full rounded-sm bg-foreground px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-background shadow-sm transition-all duration-300 hover:bg-accent hover:text-white sm:w-auto sm:px-12 sm:py-4 sm:text-[11px] sm:font-bold sm:tracking-[0.24em] sm:duration-700"
         >
           Commit Changes
         </button>
         <button
           onClick={onCancel}
-          className="w-full sm:w-auto small-caps text-[10px] text-muted-foreground hover:text-foreground transition-colors duration-500 py-2"
+          className="w-full py-2 text-[10px] font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground sm:w-auto sm:small-caps sm:duration-500"
         >
           Retract
         </button>

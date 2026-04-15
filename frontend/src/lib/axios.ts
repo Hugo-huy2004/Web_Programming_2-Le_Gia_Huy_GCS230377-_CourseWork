@@ -36,7 +36,8 @@ api.interceptors.response.use(
         const status = error?.response?.status
         const message = String(error?.response?.data?.message ?? error?.message ?? "")
         const lowered = message.toLowerCase()
-        if (status === 401 && (lowered.includes("expired") || lowered.includes("not valid") || lowered.includes("missing access token"))) {
+        const token = readPersistedAccessToken()
+        if (status === 401 && (Boolean(token) || lowered.includes("expired") || lowered.includes("not valid") || lowered.includes("missing access token"))) {
             emitSessionExpired(message)
         }
 

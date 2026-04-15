@@ -19,6 +19,8 @@ type SilverApiResponse = {
   bid?: unknown
 }
 
+const METAL_REQUEST_TIMEOUT_MS = 6500
+
 type SnapshotMeta = {
   date: string
   time: string
@@ -143,6 +145,21 @@ function createSnapshotFromLivePayloads(
   return createSnapshot(meta, goldPricePerOunce, silverPricePerOunce)
 }
 
+async function fetchJsonWithTimeout<T>(url: string, timeoutMs: number): Promise<T> {
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    const response = await fetch(url, { signal: controller.signal })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    return (await response.json()) as T
+  } finally {
+    window.clearTimeout(timeoutId)
+  }
+}
+
 function createFallbackSnapshot(): GoldPriceSnapshot {
   const meta = getFallbackSnapshotMeta()
   const silverPricePerOunceWithMarkup = DEFAULT_XAGUSD_PER_OUNCE * (1 + SILVER_MARKUP_RATE)
@@ -163,21 +180,29 @@ export const usePriceStore = create<PriceStoreState>((set) => ({
   refreshGoldPrices: async () => {
     set({ goldLoading: true, goldError: null })
     try {
-      const [goldResponse, silverResponse] = await Promise.all([
-        fetch(GOLD_API_URL),
-        fetch(SILVER_API_URL),
+      const [goldResult, silverResult] = await Promise.allSettled([
+        fetchJsonWithTimeout<GoldApiResponse>(GOLD_API_URL, METAL_REQUEST_TIMEOUT_MS),
+        fetchJsonWithTimeout<SilverApiResponse>(SILVER_API_URL, METAL_REQUEST_TIMEOUT_MS),
       ])
 
-      if (!goldResponse.ok) throw new Error(`Gold HTTP ${goldResponse.status}`)
-      if (!silverResponse.ok) throw new Error(`Silver HTTP ${silverResponse.status}`)
+      if (goldResult.status !== "fulfilled") {
+        throw goldResult.reason
+      }
 
-      const [goldPayload, silverPayload] = await Promise.all([
-        goldResponse.json() as Promise<GoldApiResponse>,
-        silverResponse.json() as Promise<SilverApiResponse>,
-      ])
+      const goldPayload = goldResult.value
+      const silverPayload =
+        silverResult.status === "fulfilled"
+          ? silverResult.value
+          : ({ price: DEFAULT_XAGUSD_PER_OUNCE } satisfies SilverApiResponse)
+
+      const warning =
+        silverResult.status === "rejected"
+          ? "Silver feed timeout. Gold remains live; silver is using fallback."
+          : null
 
       set({
         goldSnapshot: createSnapshotFromLivePayloads(goldPayload, silverPayload),
+        goldError: warning,
         goldLoading: false,
       })
     } catch {

@@ -82,7 +82,7 @@ const CustomerTab = () => {
     : []
 
   return (
-    <div className="space-y-12 py-6 animate-in fade-in duration-1000">
+    <div className="animate-in fade-in duration-700 space-y-4 py-3 md:space-y-12 md:py-6 md:duration-1000">
       <CustomerTabHeader customerCount={customers.length} />
 
       <CustomerStatsCards

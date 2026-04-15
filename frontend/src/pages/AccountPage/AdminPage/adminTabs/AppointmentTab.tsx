@@ -24,22 +24,22 @@ const AppointmentTab = () => {
   }
  
   return (
-    <div className="animate-in fade-in duration-700 space-y-10">
+    <div className="animate-in fade-in space-y-3 duration-500 md:space-y-10 md:duration-700">
       
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-border">
-        <div className="space-y-2">
-          <p className="small-caps text-accent text-[10px]">Consultation Orchestration</p>
-          <h2 className="font-serif text-3xl md:text-5xl text-foreground tracking-tighter italic">Archive Registry</h2>
+      <div className="flex flex-col justify-between gap-2 border-b border-border/70 pb-3 md:flex-row md:items-end md:gap-6 md:border-border md:pb-8">
+        <div className="space-y-1.5 md:space-y-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-accent md:small-caps">Consultation Orchestration</p>
+          <h2 className="text-lg font-semibold tracking-tight text-foreground md:font-serif md:text-5xl md:italic md:tracking-tighter">Archive Registry</h2>
         </div>
-        <div className="p-4 bg-secondary/50 rounded-sm border border-border">
-           <p className="small-caps text-[9px] text-muted-foreground mr-10 inline-block">Global Volume</p>
-           <span className="font-serif italic text-xl text-foreground">{appointments.length} Consultations</span>
+        <div className="rounded-sm border border-border/70 bg-secondary/40 px-3 py-2 md:border-border md:bg-secondary/50 md:p-4">
+           <p className="mr-2 inline-block text-[9px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Global Volume</p>
+           <span className="text-xs font-semibold text-foreground md:font-serif md:text-xl md:italic">{appointments.length} Consultations</span>
         </div>
       </div>
  
       {/* Appointments List */}
-      <div className="space-y-4">
+      <div className="space-y-2.5 md:space-y-4">
         {appointments.map((appointment, idx) => (
           <AppointmentListItem
             key={appointment.id}

@@ -80,44 +80,44 @@ const AppointmentPage = () => {
   }
  
   return (
-    <div className="max-w-7xl mx-auto py-10 md:py-20 animate-in fade-in duration-1000">
+    <div className="mx-auto max-w-7xl animate-in fade-in py-6 duration-700 md:py-20 md:duration-1000">
       
       {/* Header Section */}
-      <header className="mb-20 space-y-8">
-        <div className="flex items-center gap-4">
-           <p className="small-caps text-accent text-[10px]">Private Curatorial Access</p>
+      <header className="mb-8 space-y-4 md:mb-20 md:space-y-8">
+        <div className="flex items-center gap-3 md:gap-4">
+           <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-accent md:small-caps">Private Curatorial Access</p>
            <div className="h-px flex-1 bg-border/40" />
         </div>
-        <h1 className="font-serif text-5xl md:text-9xl text-foreground tracking-tighter leading-[0.85] italic">
+        <h1 className="text-3xl font-semibold leading-[0.92] tracking-tight text-foreground md:font-serif md:text-9xl md:italic md:tracking-tighter md:leading-[0.85]">
           Bespoke <br /> Consultation
         </h1>
-        <p className="max-w-2xl text-[16px] md:text-[18px] leading-relaxed text-muted-foreground font-serif italic">
+        <p className="max-w-2xl text-[13px] leading-relaxed text-muted-foreground/85 md:text-[18px] md:font-serif md:italic md:text-muted-foreground">
           Enter our sanctuary for deep design exploration. We provide a private environment for bespoke material selection and heritage-centered advice at the Cong Hoa Garden Atelier.
         </p>
       </header>
  
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+      <div className="grid grid-cols-1 gap-5 md:gap-20 lg:grid-cols-12">
         
         {/* Left: Info Grid */}
-        <aside className="lg:col-span-4 space-y-12">
+        <aside className="space-y-4 lg:col-span-4 md:space-y-12">
           {[
             { id: "01", title: "Archive Availability", desc: "Monday — Saturday, 9 AM – 6 PM Local Time" },
             { id: "02", title: "Dedicated Session", desc: "Private 60-minute engagement with a specialist advisor" },
             { id: "03", title: "Registry Confirmation", desc: "Secure verification via your provided contact node" }
           ].map((item) => (
-            <div key={item.id} className="group space-y-4">
-              <span className="font-serif text-2xl italic text-accent opacity-30 group-hover:opacity-100 transition-opacity duration-500">{item.id}.</span>
-              <div className="space-y-2">
-                <p className="small-caps text-[10px] tracking-widest">{item.title}</p>
-                <p className="text-sm text-muted-foreground font-serif italic leading-relaxed">{item.desc}</p>
+            <div key={item.id} className="group space-y-1.5 md:space-y-4">
+              <span className="text-base font-semibold text-accent/60 transition-opacity duration-300 group-hover:opacity-100 md:font-serif md:text-2xl md:italic md:text-accent md:opacity-30 md:duration-500">{item.id}.</span>
+              <div className="space-y-1 md:space-y-2">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] md:small-caps md:tracking-widest">{item.title}</p>
+                <p className="text-[12px] leading-relaxed text-muted-foreground/85 md:text-sm md:font-serif md:italic md:text-muted-foreground">{item.desc}</p>
               </div>
             </div>
           ))}
           
-          <div className="pt-10 border-t border-border/40">
-             <div className="p-8 bg-secondary/30 border border-border rounded-sm">
-                <p className="small-caps text-[9px] text-accent mb-4">Haus Protocol</p>
-                <p className="text-[11px] font-serif italic text-muted-foreground leading-relaxed">
+          <div className="border-t border-border/40 pt-4 md:pt-10">
+             <div className="rounded-sm border border-border bg-secondary/30 p-3 md:p-8">
+                <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-accent md:mb-4 md:small-caps">Haus Protocol</p>
+                <p className="text-[10px] leading-relaxed text-muted-foreground/85 md:text-[11px] md:font-serif md:italic md:text-muted-foreground">
                    "We believe time is the ultimate luxury. Every second of your consultation is focused on the orchestration of your legacy."
                 </p>
              </div>
@@ -126,64 +126,64 @@ const AppointmentPage = () => {
  
         {/* Right: Booking Form */}
         <main className="lg:col-span-8">
-          <form onSubmit={handleSubmit} className="p-8 md:p-14 bg-white border border-border rounded-sm shadow-sm space-y-12">
+          <form onSubmit={handleSubmit} className="space-y-5 rounded-sm border border-border bg-white p-3 shadow-sm md:space-y-12 md:p-14">
             
-            <div className="space-y-10">
+            <div className="space-y-4 md:space-y-10">
                <div>
-                  <h3 className="font-serif text-2xl italic tracking-tight mb-2">Registry Manifest</h3>
-                  <div className="h-px w-12 bg-accent/30" />
+                  <h3 className="mb-1 text-base font-semibold tracking-tight text-foreground md:mb-2 md:font-serif md:text-2xl md:italic">Registry Manifest</h3>
+                  <div className="h-px w-8 bg-accent/30 md:w-12" />
                </div>
  
-               <div className="grid gap-10 md:grid-cols-2">
-                  <div className="space-y-2 group">
-                    <label className="small-caps text-[9px] text-muted-foreground group-focus-within:text-accent transition-colors">Legal Full Name *</label>
+               <div className="grid gap-3 md:grid-cols-2 md:gap-10">
+                  <div className="group space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 transition-colors group-focus-within:text-accent md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Legal Full Name *</label>
                     <input
                       required
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="e.g. Hugo Wishpax"
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-xl italic focus:border-accent outline-none transition-all placeholder:opacity-20"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 placeholder:opacity-40 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-xl md:italic md:placeholder:opacity-20"
                     />
                   </div>
  
-                  <div className="space-y-2 group">
-                    <label className="small-caps text-[9px] text-muted-foreground group-focus-within:text-accent transition-colors">Contact Number *</label>
+                  <div className="group space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 transition-colors group-focus-within:text-accent md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Contact Number *</label>
                     <input
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+84 9XX XXX XXX"
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-xl italic focus:border-accent outline-none transition-all placeholder:opacity-20"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 placeholder:opacity-40 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-xl md:italic md:placeholder:opacity-20"
                     />
                   </div>
  
-                  <div className="space-y-2 group md:col-span-2">
-                    <label className="small-caps text-[9px] text-muted-foreground group-focus-within:text-accent transition-colors">Digital Contact *</label>
+                  <div className="group space-y-1.5 md:col-span-2 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 transition-colors group-focus-within:text-accent md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Digital Contact *</label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="curation@heritage.hwj"
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-xl italic focus:border-accent outline-none transition-all placeholder:opacity-20"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 placeholder:opacity-40 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-xl md:italic md:placeholder:opacity-20"
                     />
                   </div>
                </div>
             </div>
  
-            <div className="space-y-10">
+            <div className="space-y-4 md:space-y-10">
                <div>
-                  <h3 className="font-serif text-2xl italic tracking-tight mb-2">Orchestration Details</h3>
-                  <div className="h-px w-12 bg-accent/30" />
+                  <h3 className="mb-1 text-base font-semibold tracking-tight text-foreground md:mb-2 md:font-serif md:text-2xl md:italic">Orchestration Details</h3>
+                  <div className="h-px w-8 bg-accent/30 md:w-12" />
                </div>
  
-               <div className="grid gap-10 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="small-caps text-[9px] text-muted-foreground">Inquiry Classification</label>
+               <div className="grid gap-3 md:grid-cols-2 md:gap-10">
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Inquiry Classification</label>
                     <select
                       value={service}
                       onChange={(e) => setService(e.target.value)}
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-lg italic focus:border-accent outline-none appearance-none cursor-pointer"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-lg md:italic"
                     >
                       {APPOINTMENT_SERVICE_OPTIONS.map((s) => (
                         <option key={s} value={s}>{s}</option>
@@ -191,25 +191,25 @@ const AppointmentPage = () => {
                     </select>
                   </div>
  
-                  <div className="space-y-2">
-                    <label className="small-caps text-[9px] text-muted-foreground">Preferred Archive Date *</label>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Preferred Archive Date *</label>
                     <input
                       type="date"
                       required
                       value={date}
                       min={new Date().toISOString().split("T")[0]}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-lg focus:border-accent outline-none"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-lg"
                     />
                   </div>
  
-                  <div className="space-y-2">
-                    <label className="small-caps text-[9px] text-muted-foreground">Time Window *</label>
+                  <div className="space-y-1.5 md:space-y-2">
+                    <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Time Window *</label>
                     <select
                       required
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full border-b border-border bg-transparent py-3 font-serif text-lg italic focus:border-accent outline-none appearance-none cursor-pointer"
+                      className="h-10 w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground outline-none transition-all duration-300 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-lg md:italic"
                     >
                       <option value="">Select Opening Slot</option>
                       {APPOINTMENT_TIME_SLOTS.map((t) => (
@@ -219,22 +219,22 @@ const AppointmentPage = () => {
                   </div>
                </div>
  
-               <div className="space-y-3">
-                  <label className="small-caps text-[9px] text-muted-foreground">Vision & Requirements</label>
+               <div className="space-y-1.5 md:space-y-3">
+                  <label className="text-[10px] font-medium uppercase tracking-[0.06em] text-muted-foreground/80 md:small-caps md:text-[9px] md:tracking-normal md:text-muted-foreground">Vision & Requirements</label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Describe your design vision or specific heritage requirements..."
-                    className="w-full resize-none border-b border-border bg-transparent py-3 font-serif text-lg italic focus:border-accent outline-none transition-all placeholder:opacity-20"
+                    className="min-h-[88px] w-full resize-none rounded-sm border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-all duration-300 placeholder:opacity-40 focus:border-accent md:min-h-0 md:border-0 md:border-b md:bg-transparent md:px-0 md:py-3 md:font-serif md:text-lg md:italic md:placeholder:opacity-20"
                   />
                </div>
             </div>
  
-            <div className="pt-6">
+            <div className="pt-1 md:pt-6">
               <button
                 type="submit"
-                className="w-full py-6 bg-foreground text-background text-[11px] font-bold uppercase tracking-[0.24em] rounded-sm hover:bg-accent hover:text-white transition-all duration-700 shadow-sm"
+                className="h-11 w-full rounded-sm bg-foreground px-4 text-[10px] font-semibold uppercase tracking-[0.08em] text-background transition-all duration-300 hover:bg-accent hover:text-white md:h-auto md:py-6 md:text-[11px] md:font-bold md:tracking-[0.24em] md:duration-700"
               >
                 Finalize Registry Request
               </button>

@@ -120,17 +120,17 @@ export const useOrderStore = create<OrderStoreState>((set, get) => ({
     const voucher = getVoucherByCode(input.voucherCode ?? '')
     const voucherDiscount = Math.min(voucher?.discountAmount ?? 0, subtotal + tax + shippingFee)
     const availablePoints = activeCustomer.loyaltyPoints
-    const canRedeem = availablePoints >= settings.minimumPointsToRedeem
-    const safePointsUsed = canRedeem
-      ? Math.min(sanitizePositiveInteger(input.pointsToUse ?? 0), availablePoints)
-      : 0
+    const safePointsUsed = Math.min(sanitizePositiveInteger(input.pointsToUse ?? 0), availablePoints)
+    const pointValueUsd = 1 / Math.max(1, settings.dollarsPerPoint || 1)
     const pointsDiscount = Math.min(
-      safePointsUsed * 0.5,
+      Number((safePointsUsed * pointValueUsd).toFixed(2)),
       subtotal + tax + shippingFee - voucherDiscount
     )
-    const total = Number(
+    const computedTotal = Number(
       Math.max(0, subtotal + tax + shippingFee - voucherDiscount - pointsDiscount).toFixed(2)
     )
+    const lockedTotal = Number(input.lockedTotal ?? 0)
+    const total = lockedTotal > 0 ? Number(lockedTotal.toFixed(2)) : computedTotal
 
     const receiverName = input.receiverName.trim()
     const receiverPhone = input.receiverPhone.trim()

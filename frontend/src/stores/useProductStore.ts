@@ -4,7 +4,6 @@ import type { AddProductInput, UpdateProductInput } from '../types/store'
 import {createId,toNumber,normalizeMetalType,sanitizeDiscount,mapProductDto,} from '../lib/storeUtils'
 import {type ProductSyncPayload,} from '../lib/api'
 import { productService } from '@/services/productApiService'
-import { uploadApiService } from '@/services/uploadApiService'
 import { usePriceStore } from './usePriceStore'
 import {METAL_PURITY,DEFAULT_XAUUSD_PER_OUNCE,DEFAULT_XAGUSD_PER_OUNCE,GRAMS_PER_TROY_OUNCE,GRAMS_PER_CHI,} from '../lib/storeUtils'
 import type { ProductPricing } from '../types/store'
@@ -24,7 +23,6 @@ interface ProductStoreState {
   removeProduct: (productId: string) => Promise<{ ok: boolean; message: string }>
   deleteProduct: (productId: string) => Promise<{ ok: boolean; message: string }>
   updateProductStock: (productId: string, stock: number) => void
-  uploadProductImage: (file: File) => Promise<{ ok: boolean; publicUrl: string | null; message: string }>
   loadProductsFromMongo: () => Promise<void>
   syncProductsToMongo: () => Promise<{ ok: boolean; message: string; syncedCount: number }>
   setSearchTerm: (term: string) => void
@@ -195,31 +193,6 @@ export const useProductStore = create<ProductStoreState>((set, get) => {
           product.id === productId ? { ...product, stock: nextStock } : product
         ),
       })
-    },
-
-    uploadProductImage: async (file: File) => {
-      try {
-        const result = await uploadApiService.uploadProductImage(file)
-        if (!result.ok) {
-          return {
-            ok: false,
-            publicUrl: null,
-            message: result.message || 'Image upload failed.',
-          }
-        }
-
-        return {
-          ok: true,
-          publicUrl: result.publicUrl,
-          message: result.message,
-        }
-      } catch (error) {
-        return {
-          ok: false,
-          publicUrl: null,
-          message: error instanceof Error ? error.message : 'Image upload failed.',
-        }
-      }
     },
 
     loadProductsFromMongo: async () => {

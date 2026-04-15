@@ -17,12 +17,12 @@ import { useSettingsStore } from "./stores/useSettingsStore"
 import { useVoucherStore } from "./stores/useVoucherStore"
 import { usePriceStore } from "./stores/usePriceStore"
 import {Toaster} from "sonner"
-import { toast } from "sonner"
 import CartAnimationOverlay from "./components/CartAnimationOverlay"
 import MobileBottomNav from "./components/MobileBottomNav"
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay"
 import { AUTH_SESSION_EXPIRED_EVENT } from "@/lib/authEvents"
 import { useCustomerStore } from "./stores/useCustomerStore"
+import { rememberPostLoginRedirect, showAuthToastOnce } from "@/lib/authRedirect"
  
 export function App() {
   const loadProductsFromMongo = useProductStore((state) => state.loadProductsFromMongo)
@@ -49,20 +49,15 @@ export function App() {
   }, [currentAdmin, accessToken, setCurrentAdmin])
 
   useEffect(() => {
-    let lastHandledAt = 0
-
     const handleSessionExpired = (event: Event) => {
-      const now = Date.now()
-      if (now - lastHandledAt < 1500) return
-      lastHandledAt = now
-
       const customEvent = event as CustomEvent<{ message?: string }>
       const reason = customEvent.detail?.message || "Your session has expired."
 
       clearSession()
       customerLogout()
       setCurrentAdmin(null)
-      toast.error(`${reason} Please sign in again.`)
+      rememberPostLoginRedirect()
+      showAuthToastOnce(`${reason} Please sign in again.`)
 
       if (window.location.pathname !== "/user") {
         window.location.assign("/user")

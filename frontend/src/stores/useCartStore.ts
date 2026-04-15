@@ -14,7 +14,7 @@ export interface FlyingItem {
 
 interface CartStoreState {
   cartItems: CartItem[]
-  addToCart: (productId: string, productStock: number) => void
+  addToCart: (productId: string, productStock: number, quantity?: number) => void
   updateCartQuantity: (productId: string, quantity: number, productStock: number) => void
   removeFromCart: (productId: string) => void
   clearCart: () => void
@@ -34,8 +34,9 @@ let nextId = 0
 export const useCartStore = create<CartStoreState>((set, get) => ({
   cartItems: readStorage<CartItem[]>(storageKeys.cart, []),
   
-  addToCart: (productId, productStock) => {
+  addToCart: (productId, productStock, quantity = 1) => {
     if (productStock <= 0) return
+    const normalizedQuantity = Math.max(1, Math.floor(quantity))
     const { cartItems } = get()
     const existed = cartItems.find((item) => item.productId === productId)
     if ((existed?.quantity ?? 0) >= productStock) return
@@ -43,10 +44,10 @@ export const useCartStore = create<CartStoreState>((set, get) => ({
     const newCartItems = existed
       ? cartItems.map((item) =>
           item.productId === productId
-            ? { ...item, quantity: Math.min(item.quantity + 1, productStock) }
+            ? { ...item, quantity: Math.min(item.quantity + normalizedQuantity, productStock) }
             : item
         )
-      : [...cartItems, { productId, quantity: 1 }]
+      : [...cartItems, { productId, quantity: Math.min(normalizedQuantity, productStock) }]
 
     set({ cartItems: newCartItems })
     writeStorage(storageKeys.cart, newCartItems)

@@ -22,7 +22,7 @@ type ProductFormModalProps = {
   form: ProductFormState
   setForm: React.Dispatch<React.SetStateAction<ProductFormState>>
   categories: string[]
-  onUploadImage: (file: File) => Promise<string | null>
+  onSelectImage: (file: File) => void
   onClose: () => void
   onSave: () => void
 }
@@ -33,18 +33,16 @@ export function ProductFormModal({
   form,
   setForm,
   categories,
-  onUploadImage,
+  onSelectImage,
   onClose,
   onSave,
 }: ProductFormModalProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [] },
     multiple: false,
-    onDrop: async (files: File[]) => {
+    onDrop: (files: File[]) => {
       if (!files[0]) return
-      const publicUrl = await onUploadImage(files[0])
-      if (!publicUrl) return
-      setForm((prev) => ({ ...prev, imageUrl: publicUrl }))
+      onSelectImage(files[0])
     },
   })
 

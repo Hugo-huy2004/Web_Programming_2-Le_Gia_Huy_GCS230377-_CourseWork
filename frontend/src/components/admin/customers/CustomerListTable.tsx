@@ -16,36 +16,36 @@ type CustomerListTableProps = {
 export function CustomerListTable({ customers, formatUsd, getTierLabel, onOpenCustomerDetails }: CustomerListTableProps) {
   return (
     <div className="liquid-glass overflow-hidden rounded-sm border border-border/40 shadow-editorial">
-      <div className="space-y-3 p-3 md:hidden">
+      <div className="space-y-2 p-2 md:hidden">
         {customers.map((customer) => {
           const tier = getTierLabel(customer.totalSpent)
           return (
             <button
               key={customer.email}
               onClick={() => onOpenCustomerDetails(customer)}
-              className="w-full rounded-sm border border-border/30 bg-background/70 p-4 text-left transition-all hover:border-accent"
+              className="w-full rounded-sm border border-border/30 bg-background/70 p-3 text-left transition-all hover:border-accent"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-serif text-base italic text-foreground truncate">{customer.profile.fullName || "-"}</p>
-                  <p className="mt-1 text-[11px] lowercase text-muted-foreground/60 break-all">{customer.email}</p>
+                  <p className="truncate text-sm font-semibold text-foreground">{customer.profile.fullName || "-"}</p>
+                  <p className="mt-0.5 break-all text-[10px] lowercase text-muted-foreground/70">{customer.email}</p>
                 </div>
-                <span className={`inline-block rounded-none border px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] ${tier.color}`}>
+                <span className={`inline-block border px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.08em] ${tier.color}`}>
                   {tier.label}
                 </span>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-[10px]">
+              <div className="mt-2 grid grid-cols-3 gap-2 text-[10px]">
                 <div>
-                  <p className="small-caps text-muted-foreground/60">Orders</p>
+                  <p className="text-[9px] font-medium text-muted-foreground/70">Orders</p>
                   <p className="font-mono text-foreground/70">{customer.totalOrders}</p>
                 </div>
                 <div>
-                  <p className="small-caps text-muted-foreground/60">Points</p>
+                  <p className="text-[9px] font-medium text-muted-foreground/70">Points</p>
                   <p className="font-mono text-accent">{customer.loyaltyPoints}</p>
                 </div>
                 <div>
-                  <p className="small-caps text-muted-foreground/60">Value</p>
-                  <p className="font-serif italic text-foreground">{formatUsd(customer.totalSpent)}</p>
+                  <p className="text-[9px] font-medium text-muted-foreground/70">Value</p>
+                  <p className="text-[11px] font-semibold text-foreground">{formatUsd(customer.totalSpent)}</p>
                 </div>
               </div>
             </button>

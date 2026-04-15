@@ -6,7 +6,7 @@ interface OrderCalculationsProps {
   products: Product[]
   getProductPricing: (product: Product) => { finalPrice: number }
   shippingMethod: "shipper" | "pickup"
-  settings: { shipperFee: number; minimumPointsToRedeem: number }
+  settings: { shipperFee: number; dollarsPerPoint: number }
   appliedVoucher: { discountAmount: number } | null | undefined
   pointsToUse: string
   availablePoints: number
@@ -53,7 +53,7 @@ export function calculateOrderSummary({
       .toFixed(2)
   )
 
-  const canUsePoints = availablePoints >= settings.minimumPointsToRedeem
+  const canUsePoints = availablePoints > 0
   const normalizedPoints = canUsePoints
     ? Math.min(Math.max(0, Math.floor(Number(pointsToUse) || 0)), availablePoints)
     : 0
@@ -63,9 +63,11 @@ export function calculateOrderSummary({
   const tax = Number((subtotal * taxRate).toFixed(2))
 
   const voucherDiscount = Math.min(appliedVoucher?.discountAmount ?? 0, subtotal + tax + shippingFee)
+  const safeDollarsPerPoint = Math.max(1, settings.dollarsPerPoint || 1)
+  const pointValueUsd = 1 / safeDollarsPerPoint
 
   const pointsDiscount = Math.min(
-    normalizedPoints * 0.5,
+    Number((normalizedPoints * pointValueUsd).toFixed(2)),
     subtotal + tax + shippingFee - voucherDiscount
   )
 

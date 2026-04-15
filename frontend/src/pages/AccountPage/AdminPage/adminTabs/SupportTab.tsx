@@ -77,9 +77,9 @@ const SupportTab = ({ searchValue, statusFilter }: SupportTabProps) => {
   }
 
   return (
-    <div className="space-y-8 md:space-y-12 py-4 md:py-6 animate-in fade-in duration-1000">
+    <div className="animate-in fade-in duration-700 space-y-4 py-3 md:space-y-12 md:py-6 md:duration-1000">
       {/* Ticket Ledger */}
-      <div className="space-y-6">
+      <div className="space-y-3 md:space-y-6">
         {filteredTickets.length === 0 ? (
           <AdminEmptyState message="No support tickets found in this registry sector." />
         ) : (
@@ -91,17 +91,17 @@ const SupportTab = ({ searchValue, statusFilter }: SupportTabProps) => {
             return (
               <div 
                 key={ticket.id} 
-                className="group liquid-glass border border-border p-4 md:p-10 rounded-sm hover:border-accent hover:shadow-editorial transition-all duration-700 flex flex-col md:flex-row gap-5 md:gap-10 items-start md:items-center justify-between"
+                className="group liquid-glass flex flex-col items-start justify-between gap-3 rounded-sm border border-border p-3 transition-all duration-300 hover:border-accent hover:shadow-editorial md:flex-row md:items-center md:gap-10 md:p-10 md:duration-700"
               >
-                <div className="flex-1 space-y-3 md:space-y-4 md:pr-8 border-none md:border-r md:border-border/60">
+                <div className="flex-1 space-y-2 border-none md:space-y-4 md:pr-8 md:border-r md:border-border/60">
                   <div className="flex items-center gap-3">
                     <StatusIcon className={`w-5 h-5 ${config.colorClassName}`} />
-                    <p className="font-serif text-lg md:text-xl italic text-foreground leading-none tracking-tight break-all">
+                    <p className="break-all text-sm font-semibold leading-none tracking-tight text-foreground md:font-serif md:text-xl md:italic">
                         {ticket.customerEmail}
                     </p>
                   </div>
 
-                  <div className="grid gap-1 text-[11px] text-muted-foreground md:grid-cols-2">
+                  <div className="grid gap-1 text-[10px] text-muted-foreground md:grid-cols-2 md:text-[11px]">
                     <p>
                       Name: <span className="text-foreground/80">{customer?.profile.fullName || "Unknown"}</span>
                     </p>
@@ -113,20 +113,39 @@ const SupportTab = ({ searchValue, statusFilter }: SupportTabProps) => {
                     </p>
                   </div>
 
-                  <p className="text-[13px] md:text-sm text-muted-foreground leading-relaxed">
+                  <p className="text-[12px] leading-relaxed text-muted-foreground md:text-sm">
                     {ticket.message}
                   </p>
-                  <p className="small-caps text-accent text-[9px] font-bold tracking-[0.2em]">
+                  <p className="text-[10px] font-semibold text-accent md:small-caps md:text-[9px] md:font-bold md:tracking-[0.2em]">
                     {new Date(ticket.createdAt).toLocaleString()}
                   </p>
                 </div>
                 
-                <div className="flex w-full md:w-auto items-center gap-3 md:gap-6 md:min-w-max">
-                  <div className="relative flex-1 md:flex-none md:w-40">
+                <div className="flex w-full items-center gap-2 md:w-auto md:min-w-max md:gap-6">
+                  <div className="flex flex-1 flex-wrap gap-1.5 md:hidden">
+                    {SUPPORT_STATUS_OPTIONS.map((opt) => {
+                      const isActive = opt === ticket.status
+                      return (
+                        <button
+                          key={opt}
+                          onClick={() => void handleUpdateSupportStatus(ticket.id, opt)}
+                          className={`rounded-sm border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] transition-colors ${
+                            isActive
+                              ? "border-accent bg-accent/10 text-accent"
+                              : "border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground"
+                          }`}
+                        >
+                          {formatSupportStatusLabel(opt)}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <div className="relative hidden flex-1 md:flex-none md:block md:w-40">
                     <select
                       value={ticket.status}
                       onChange={(e) => void handleUpdateSupportStatus(ticket.id, e.target.value as SupportStatus)}
-                      className="w-full bg-secondary/20 border-b border-border py-2.5 text-sm focus:border-accent outline-none transition-all duration-700 uppercase tracking-[0.12em] md:tracking-widest text-[10px] appearance-none cursor-pointer"
+                      className="h-9 w-full cursor-pointer appearance-none border border-border bg-secondary/20 px-2 text-[10px] uppercase tracking-[0.08em] outline-none transition-all duration-300 focus:border-accent md:h-auto md:border-0 md:border-b md:bg-transparent md:py-2.5 md:text-sm md:tracking-widest md:duration-700"
                     >
                       {SUPPORT_STATUS_OPTIONS.map(opt => (
                         <option key={opt} value={opt} className="uppercase">{formatSupportStatusLabel(opt)}</option>
@@ -136,7 +155,7 @@ const SupportTab = ({ searchValue, statusFilter }: SupportTabProps) => {
                   </div>
                   <button
                     onClick={() => handleDeleteTicket(ticket.id)}
-                    className="p-2.5 md:p-3 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground rounded-sm transition-colors duration-500"
+                    className="rounded-sm bg-destructive/10 p-2.5 text-destructive transition-colors duration-300 hover:bg-destructive hover:text-destructive-foreground md:p-3 md:duration-500"
                     title="Delete Ticket"
                   >
                     <Trash2 className="w-5 h-5" />

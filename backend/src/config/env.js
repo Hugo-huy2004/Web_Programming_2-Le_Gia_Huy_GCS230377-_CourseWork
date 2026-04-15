@@ -16,7 +16,7 @@ function toNumber(value, fallback) {
 }
 
 function parseAllowedOrigins() {
-    const raw = process.env.CLIENT_ORIGIN ?? "http://localhost:5173,http://localhost:5174";
+    const raw = process.env.CLIENT_ORIGIN ?? "http://localhost:5174";
     return raw
         .split(",")
         .map((item) => item.trim())

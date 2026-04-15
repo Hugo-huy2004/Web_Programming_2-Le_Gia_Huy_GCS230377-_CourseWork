@@ -96,8 +96,8 @@ export function CustomerProfileTab({
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
       {!isEditingProfile ? (
-        <div className="space-y-8 md:space-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-4 md:space-y-12">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6">
             {[
               {
                 label: "Membership Tier",
@@ -107,57 +107,57 @@ export function CustomerProfileTab({
               { label: "Accumulated Reserves", value: `${activeCustomer.loyaltyPoints} Points`, sub: "Loyalty Capital" },
               { label: "Portfolio Valuation", value: formatUsd(activeCustomer.totalSpent), sub: "Total Investment" },
             ].map((stat, i) => (
-              <div key={i} className="p-5 md:p-8 bg-white border border-border rounded-sm shadow-sm hover:shadow-editorial transition-all duration-500 group">
-                <p className="small-caps text-[9px] text-muted-foreground group-hover:text-accent transition-colors">{stat.label}</p>
-                <p className="font-serif text-xl md:text-3xl italic text-foreground mt-2 break-words">{stat.value}</p>
-                <p className="text-[10px] font-serif italic text-muted-foreground/60 mt-2">{stat.sub}</p>
+              <div key={i} className="group rounded-sm border border-border bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-editorial md:p-8 md:duration-500">
+                <p className="text-[10px] font-medium text-muted-foreground transition-colors group-hover:text-accent md:small-caps md:text-[9px]">{stat.label}</p>
+                <p className="mt-1 break-words text-lg font-semibold text-foreground md:mt-2 md:font-serif md:text-3xl md:italic">{stat.value}</p>
+                <p className="mt-1 text-[10px] text-muted-foreground/70 md:mt-2 md:font-serif md:italic md:text-[10px]">{stat.sub}</p>
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <div className="lg:col-span-7 space-y-6">
-              <div className="p-5 md:p-12 bg-white border border-border rounded-sm shadow-sm h-full">
-                <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-8 md:mb-10">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-10">
+            <div className="space-y-4 lg:col-span-7 lg:space-y-6">
+              <div className="h-full rounded-sm border border-border bg-white p-3 shadow-sm md:p-12">
+                <div className="mb-4 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-start sm:justify-between md:mb-10 md:gap-4">
                   <div className="space-y-1">
-                    <p className="small-caps text-accent">Registry Manifest</p>
-                    <h3 className="font-serif text-xl md:text-2xl italic">Collector Profile</h3>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-accent md:small-caps">Registry Manifest</p>
+                    <h3 className="text-lg font-semibold md:font-serif md:text-2xl md:italic">Collector Profile</h3>
                   </div>
                   <button
                     onClick={handleStartEditProfile}
-                    className="w-full sm:w-auto px-5 py-2 border border-border rounded-sm text-[9px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all duration-500"
+                    className="w-full rounded-sm border border-border px-4 py-2 text-[10px] font-semibold transition-all duration-300 hover:bg-foreground hover:text-background sm:w-auto md:px-5 md:text-[9px] md:font-bold md:uppercase md:tracking-widest md:duration-500"
                   >
                     Edit Registry
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 font-serif">
+                <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2 md:gap-y-8 md:font-serif">
                   <div className="space-y-1">
-                    <p className="small-caps text-[8px] text-muted-foreground/40">Legal Full Name</p>
-                    <p className="text-base md:text-lg italic text-foreground border-b border-border/40 pb-2">{activeCustomer.profile.fullName}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/60 md:small-caps md:text-[8px]">Legal Full Name</p>
+                    <p className="border-b border-border/40 pb-1 text-sm text-foreground md:pb-2 md:text-lg md:italic">{activeCustomer.profile.fullName}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="small-caps text-[8px] text-muted-foreground/40">Birth Registry</p>
-                    <p className="text-base md:text-lg italic text-foreground border-b border-border/40 pb-2">{activeCustomer.profile.birthday || "Unregistered"}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/60 md:small-caps md:text-[8px]">Birth Registry</p>
+                    <p className="border-b border-border/40 pb-1 text-sm text-foreground md:pb-2 md:text-lg md:italic">{activeCustomer.profile.birthday || "Unregistered"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="small-caps text-[8px] text-muted-foreground/40">Communication Line</p>
-                    <p className="text-base md:text-lg italic text-foreground border-b border-border/40 pb-2">{activeCustomer.profile.phone || "Unlinked"}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/60 md:small-caps md:text-[8px]">Communication Line</p>
+                    <p className="border-b border-border/40 pb-1 text-sm text-foreground md:pb-2 md:text-lg md:italic">{activeCustomer.profile.phone || "Unlinked"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="small-caps text-[8px] text-muted-foreground/40">Registry ID</p>
-                    <p className="text-base md:text-lg italic text-foreground border-b border-border/40 pb-2 break-all">HWJ-{activeCustomer.email.split("@")[0].slice(0, 8).toUpperCase()}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/60 md:small-caps md:text-[8px]">Registry ID</p>
+                    <p className="break-all border-b border-border/40 pb-1 text-sm text-foreground md:pb-2 md:text-lg md:italic">HWJ-{activeCustomer.email.split("@")[0].slice(0, 8).toUpperCase()}</p>
                   </div>
                   <div className="md:col-span-2 space-y-1">
-                    <p className="small-caps text-[8px] text-muted-foreground/40">Permanent Residence</p>
-                    <p className="text-sm italic text-muted-foreground leading-relaxed pt-1">{activeCustomer.profile.address || "Undisclosed Geographic Anchor"}</p>
+                    <p className="text-[10px] font-medium text-muted-foreground/60 md:small-caps md:text-[8px]">Permanent Residence</p>
+                    <p className="pt-1 text-sm leading-relaxed text-muted-foreground md:italic">{activeCustomer.profile.address || "Undisclosed Geographic Anchor"}</p>
                   </div>
                 </div>
 
-                <div className="mt-10 pt-8 border-t border-border/40 flex justify-end">
+                <div className="mt-5 flex justify-end border-t border-border/40 pt-4 md:mt-10 md:pt-8">
                   <button
                     onClick={customerLogout}
-                    className="text-[9px] font-bold uppercase tracking-[0.2em] text-destructive/60 hover:text-destructive transition-colors flex items-center gap-2"
+                    className="flex items-center gap-2 text-[10px] font-semibold text-destructive/70 transition-colors hover:text-destructive md:text-[9px] md:font-bold md:uppercase md:tracking-[0.2em]"
                   >
                     Logout
                   </button>
@@ -165,30 +165,30 @@ export function CustomerProfileTab({
               </div>
             </div>
 
-            <div className="lg:col-span-5 space-y-6">
-              <div className="p-5 md:p-12 bg-secondary/30 border border-border rounded-sm h-full">
-                <div className="space-y-1 mb-8 md:mb-10">
-                  <p className="small-caps text-muted-foreground">Status Eligibility</p>
-                  <h3 className="font-serif text-xl md:text-2xl italic">Tier Privileges</h3>
+            <div className="space-y-4 lg:col-span-5 lg:space-y-6">
+              <div className="h-full rounded-sm border border-border bg-secondary/30 p-3 md:p-12">
+                <div className="mb-4 space-y-1 md:mb-10">
+                  <p className="text-[10px] font-medium text-muted-foreground md:small-caps">Status Eligibility</p>
+                  <h3 className="text-lg font-semibold md:font-serif md:text-2xl md:italic">Tier Privileges</h3>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-3 md:space-y-6">
                   {privilegeRows.map((p, i) => (
-                    <div key={i} className={`p-4 rounded-sm border transition-all duration-500 ${p.active ? "border-accent bg-white shadow-sm" : "border-border/40 opacity-30 grayscale"}`}>
-                      <div className="flex justify-between items-center mb-1">
-                        <p className="small-caps text-[10px]">{p.label} Protocol</p>
+                    <div key={i} className={`rounded-sm border p-3 transition-all duration-300 md:p-4 md:duration-500 ${p.active ? "border-accent bg-white shadow-sm" : "border-border/40 opacity-40"}`}>
+                      <div className="mb-1 flex items-center justify-between">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] md:small-caps">{p.label} Protocol</p>
                         {p.active && <div className="h-1 w-1 bg-accent rounded-full" />}
                       </div>
-                      <p className="text-[11px] font-serif italic text-muted-foreground leading-relaxed">{p.desc}</p>
+                      <p className="text-[11px] leading-relaxed text-muted-foreground md:font-serif md:italic">{p.desc}</p>
                     </div>
                   ))}
 
-                  <div className="pt-6 border-t border-border/40">
-                    <p className="small-caps text-[9px] text-muted-foreground mb-4">Capital Progression</p>
+                  <div className="border-t border-border/40 pt-4 md:pt-6">
+                    <p className="mb-3 text-[10px] font-medium text-muted-foreground md:small-caps md:text-[9px] md:mb-4">Capital Progression</p>
                     <div className="h-1 w-full bg-border/20 rounded-full overflow-hidden">
                       <motion.div initial={{ width: 0 }} animate={{ width: `${getProgressPercent(activeCustomer.totalSpent)}%` }} className="h-full bg-accent" />
                     </div>
-                    <p className="text-[9px] font-serif italic text-muted-foreground mt-3 text-right">
+                    <p className="mt-2 text-right text-[10px] text-muted-foreground md:mt-3 md:font-serif md:italic md:text-[9px]">
                       {getProgressLabel(activeCustomer.totalSpent, formatUsd)}
                     </p>
                   </div>
